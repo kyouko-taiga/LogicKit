@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "Funky",
+        "repositoryURL": "https://github.com/rxwei/Funky",
+        "state": {
+          "branch": null,
+          "revision": "b94dbf2a9ce7ca35b92a8b490037b90c0e9c54c0",
+          "version": "2.0.1"
+        }
+      },
+      {
+        "package": "Parsey",
+        "repositoryURL": "https://github.com/rxwei/Parsey",
+        "state": {
+          "branch": null,
+          "revision": "704695b388cf9d6c0b6965ce5755079d3c1ceaae",
+          "version": "2.0.0"
+        }
+      }
+    ]
+  },
+  "version": 1
+}
