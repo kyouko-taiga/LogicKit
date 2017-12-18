@@ -1,5 +1,7 @@
 # LogicKit
 
+[![Build Status](https://travis-ci.org/kyouko-taiga/LogicKit.svg?branch=master)](https://travis-ci.org/kyouko-taiga/LogicKit)
+
 LogicKit is a Prolog-like language,
 distributed in the form of a Swift Embedded Domain Specific Language (EDSL).
 
