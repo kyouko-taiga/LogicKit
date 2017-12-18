@@ -254,3 +254,7 @@ You'll be presented a prompt that lets you issue queries against your knowledge 
 > Note that `lki` can only read knowledge bases written with the LogicKit syntax,
 > meaning that you can't use the full power of Swift
 > like you would be able to in actual Swift sources.
+
+## License
+
+LogicKit is licensed under the MIT License.
