@@ -5,7 +5,7 @@ distributed in the form of a Swift Embedded Domain Specific Language (EDSL).
 
 ## Motivation
 
-[https://en.wikipedia.org/wiki/Prolog](Prolog) is a general purpose logic programming language.
+[Prolog](https://en.wikipedia.org/wiki/Prolog) is a general purpose logic programming language.
 A program is expressed in terms of relations,
 and computation in terms of queries over these relations.
 The beauty of logic programming is that
@@ -26,7 +26,7 @@ Let's imagine we've to program a complex user interface with a lot of stateful c
 In fact, algorithms that are easily expressed in an imperative way
 often prove to be difficult to write in a functional logic programming style.
 
-But modern languages like Swift are all about mixing paradigm's right?
+But modern languages like Swift are all about mixing paradigms right?
 So why not bringing logic programming into the mix as well!
 With LogicKit, the above Prolog example can be rewritten entirely in Swift:
 
@@ -87,8 +87,8 @@ Instead, it returns a sequence whose each element denote one correct answer.
 If the sequence is empty, then there isn't any solution.
 
 ```swift
-print("Sqirtle has type water:" answers.next() != nil)
-// Prints "Sqirtle has type water: true"
+print("Squirtle has type water:" answers.next() != nil)
+// Prints "Squirtle has type water: true"
 ```
 
 Being able to query our knowledge base this way is nice,
@@ -122,7 +122,7 @@ Note that because the query involves variables,
 not only are we interested to know if it is satisfiable,
 but also for what binding of `a` and `b`.
 Well, in fact each element of the sequence returned by `Knowledge.ask(_:_:)`
-denote such a binding:
+denotes such a binding:
 
 ```swift
 for binding in answers {
@@ -136,7 +136,7 @@ for binding in answers {
 ```
 
 Note that since LogicKit is an EDSL,
-nothing constrain us to use the power of Swift to make our definitions more readable:
+nothing prevents us from using the full power of Swift to make our definitions more readable:
 
 ```swift
 let bulbasaur : Term = .lit("Bulbasaur")
@@ -159,10 +159,10 @@ let answer = kb.ask(bulbasaur !> squirtle)
 
 ### Installation
 
-LogickKit is distributed in the form of a Switch package
+LogicKit is distributed in the form of a Switch package
 and can be integrated with the [Swift Package Manager](https://swift.org/package-manager/).
 
-Start by creating a package:
+Start by creating a new package (unless you already have one):
 
 ```bash
 mkdir MyLogicProgram
@@ -170,7 +170,7 @@ cd MyLogicProgram
 swift package init --type executable
 ```
 
-Then add LogicKit as a dependency to your package in your `Package.swift` file:
+Then add LogicKit as a dependency to your package, from your `Package.swift` file:
 
 ```swift
 import PackageDescription
@@ -203,13 +203,17 @@ import LogicKit
 ```
 
 > For Xcode users:
-> You can use the Swift Package Manager to create a Xcode project.
-> Once you've added LogicKit has a dependency and compiled your project at least one,
+> You can use the Swift Package Manager to create an Xcode project.
+> Once you've added LogicKit has a dependency and compiled your project at least once,
 > type the command:
 >
 > ```bash
 > swift package generate-xcodeproj
 > ```
+>
+> It will create a `YourPackage.xcodeproj` directory you can edit with Xcode.
+> The schemes of the auto-generated package might require some manual configuration.
+> Please refer to Xcode's documentation for more information on that end.
 
 ### Using the interpreter
 
@@ -221,7 +225,7 @@ To use the interpreter, first clone this repository:
 git clone git@github.com:kyouko-taiga/LogicKit.git
 ```
 
-You can then compile the `lki`:
+You can then compile `lki`:
 
 ```bash
 swift build --configuration release --product lki
@@ -239,12 +243,14 @@ To use `lki`, first write your knowledge base in some file, for instance `nat.kb
 }
 ```
 
-Then, invoke the interpreter with the path to your knowledge base:
+Then, invoke the interpreter with a path to your knowledge base:
 
 ```bash
 lki /path/to/nat.kb
 ```
 
-You'll be presented a prompt that lets you issue requests against your knowledge base.
+You'll be presented a prompt that lets you issue queries against your knowledge base.
 
-> Note that `lki` can only read knowledge bases written with the LogicKit syntax.
+> Note that `lki` can only read knowledge bases written with the LogicKit syntax,
+> meaning that you can't use the full power of Swift
+> like you would be able to in actual Swift sources.
