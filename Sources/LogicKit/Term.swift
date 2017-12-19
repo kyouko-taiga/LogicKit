@@ -1,3 +1,5 @@
+infix operator ~~: ComparisonPrecedence
+
 public enum Term {
 
     case `var`(String)
@@ -51,6 +53,10 @@ public enum Term {
 
     public static func ||(lhs: Term, rhs: Term) -> Term {
         return .disjunction(lhs, rhs)
+    }
+
+    public static func ~~(lhs: Term, rhs: Term) -> Term {
+        return ._term(name: "~~", arguments: [lhs, rhs])
     }
 
 }

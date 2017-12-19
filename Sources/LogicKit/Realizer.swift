@@ -55,6 +55,32 @@ struct Realizer: IteratorProtocol {
 
         let goal = self.goals.first!
 
+        // Check for the built-in `~~/2` predicate.
+        if case ._term("~~", let args) = goal {
+            assert(args.count == 2)
+            if let nodeResult = self.unify(goal: args[0], fact: args[1]) {
+                if self.goals.count > 1 {
+                    let subGoals     = self.goals.dropFirst().map(nodeResult.deepWalk)
+                    self.subRealizer = RealizerAlternator(realizers: [
+                        Realizer(
+                            goals         : subGoals,
+                            knowledge     : self.knowledge,
+                            parentBindings: nodeResult,
+                            logger        : self.logger)
+                    ])
+                    if let branchResult = self.subRealizer!.next() {
+                        return branchResult
+                            .merged(with: parentBindings)
+                            .reified()
+                    }
+                } else {
+                    return nodeResult
+                        .merged(with: parentBindings)
+                        .reified()
+                }
+            }
+        }
+
         self.logger?.log(message: "Attempting to realize ", terminator: "")
         self.logger?.log(message: goal.description, fontAttributes: [.bold])
 
