@@ -15,6 +15,16 @@ public struct KnowledgeBase {
         }
     }
 
+    public func union(with other: KnowledgeBase) -> KnowledgeBase {
+        var newClauses = self.knowledge
+        for clause in other.knowledge {
+            if !newClauses.contains(clause) {
+                newClauses.append(clause)
+            }
+        }
+        return KnowledgeBase(knowledge: newClauses)
+    }
+
     var refreshed: KnowledgeBase {
         return KnowledgeBase(knowledge: self.knowledge.map(self.renameVariables))
     }
