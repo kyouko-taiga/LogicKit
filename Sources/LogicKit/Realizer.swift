@@ -54,9 +54,11 @@ struct Realizer: IteratorProtocol {
         }
 
         let goal = self.goals.first!
+        self.logger?.log(message: "Attempting to realize ", terminator: "")
+        self.logger?.log(message: goal.description, fontAttributes: [.bold])
 
-        // Check for the built-in `~~/2` predicate.
-        if case ._term("~~", let args) = goal {
+        // Check for the built-in `~=~/2` predicate.
+        if case ._term("lk.~=~", let args) = goal {
             assert(args.count == 2)
             if let nodeResult = self.unify(goal: args[0], fact: args[1]) {
                 if self.goals.count > 1 {
@@ -80,9 +82,6 @@ struct Realizer: IteratorProtocol {
                 }
             }
         }
-
-        self.logger?.log(message: "Attempting to realize ", terminator: "")
-        self.logger?.log(message: goal.description, fontAttributes: [.bold])
 
         // Look for the next root clause.
         while self.clauseIndex != self.knowledge.endIndex {

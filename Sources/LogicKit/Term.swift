@@ -1,4 +1,4 @@
-infix operator ~~: ComparisonPrecedence
+infix operator ~=~: ComparisonPrecedence
 
 public enum Term {
 
@@ -55,8 +55,8 @@ public enum Term {
         return .disjunction(lhs, rhs)
     }
 
-    public static func ~~(lhs: Term, rhs: Term) -> Term {
-        return ._term(name: "~~", arguments: [lhs, rhs])
+    public static func ~=~(lhs: Term, rhs: Term) -> Term {
+        return ._term(name: "lk.~=~", arguments: [lhs, rhs])
     }
 
 }
