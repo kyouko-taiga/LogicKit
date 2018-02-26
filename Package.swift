@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "lki", targets: ["lki"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/rxwei/Parsey", from: "2.0.0"),
+        .package(url: "https://github.com/kyouko-taiga/Parsey.git", .branch("master")),
     ],
     targets: [
         .target(name: "LogicKit"),

@@ -12,11 +12,11 @@
       },
       {
         "package": "Parsey",
-        "repositoryURL": "https://github.com/rxwei/Parsey",
+        "repositoryURL": "https://github.com/kyouko-taiga/Parsey.git",
         "state": {
-          "branch": null,
-          "revision": "704695b388cf9d6c0b6965ce5755079d3c1ceaae",
-          "version": "2.0.0"
+          "branch": "master",
+          "revision": "e7b5144f3ea1b51ea81043c7567f132c4965ae1c",
+          "version": null
         }
       }
     ]
