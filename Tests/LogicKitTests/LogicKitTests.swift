@@ -90,11 +90,51 @@ class LogicKitTests: XCTestCase {
         XCTAssertEqual(answer?["result"], nat(value: 2))
     }
 
+    func testLitSyntax() {
+        let play  : Term = "play"
+        let mia   : Term = "mia"
+        let happy : Term = "happy"
+        let kb: KnowledgeBase = [
+            play [mia],
+            { play [mia] && play[mia] } => happy [mia],
+        ]
+
+        let answers0 = Array(kb.ask(happy[mia]))
+        XCTAssertEqual(answers0.count, 1)
+        XCTAssertEqual(answers0[0]   , [:])
+
+        let answers1 = Array(kb.ask(happy[.var("who")]))
+        XCTAssertEqual(answers1.count, 1)
+        XCTAssertEqual(answers1[0]   , ["who": mia])
+
+        XCTAssertEqual(
+          { play [mia] && play[mia] } => happy [mia],
+          ( play [mia] && play[mia] ) => happy [mia]
+        )
+        XCTAssertEqual(
+          { play [mia] && play[mia] } => happy [mia],
+          happy [mia] |- { play [mia] && play[mia] }
+        )
+        XCTAssertEqual(
+          { play [mia] && play[mia] } => happy [mia],
+          happy [mia] |- ( play [mia] && play[mia] )
+        )
+        XCTAssertEqual(
+          { play [mia] && play[mia] } => happy [mia],
+          happy [mia] ⊢ { play [mia] ∧ play[mia] }
+        )
+        XCTAssertEqual(
+          { play [mia] && play[mia] } => happy [mia],
+          happy [mia] ⊢ ( play [mia] ∧ play[mia] )
+        )
+    }
+
     static var allTests = [
         ("testConstantFacts"     , testConstantFacts),
         ("testFactsWithVariables", testFactsWithVariables),
         ("testSimpleDeductions"  , testSimpleDeductions),
         ("testRecursion"         , testRecursion),
+        ("testLitSyntax"         , testLitSyntax),
     ]
 
 }

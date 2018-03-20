@@ -1,11 +1,16 @@
 infix operator ~=~: ComparisonPrecedence
+infix operator =>
+infix operator |-
+infix operator ⊢
+infix operator ∧
+infix operator ∨
 
 public enum Term {
 
     case `var`(String)
     case val(AnyHashable)
-    indirect case _term(name: String, arguments: [Term])
-    indirect case _rule(name: String, arguments: [Term], body: Term)
+    indirect case _term(name: Term, arguments: [Term])
+    indirect case _rule(name: Term, arguments: [Term], body: Term)
 
     indirect case conjunction(Term, Term)
     indirect case disjunction(Term, Term)
@@ -35,31 +40,95 @@ public enum Term {
 
     // MARK: EDSL
 
-    public static func lit<T>(_ value: T) -> Term where T: Hashable {
+    public static func lit<T>(_ value: T) -> Term where T: Hashable & CustomStringConvertible {
         return .val(AnyHashable(value))
     }
 
-    public static func fact(_ name: String, _ arguments: Term...) -> Term {
+    /////
+
+    public static func fact(_ name: Term, _ arguments: Term...) -> Term {
+        guard case .val(_) = name else { fatalError() }
         return ._term(name: name, arguments: arguments)
     }
 
-    public static func rule(_ name: String, _ arguments: Term..., body: () -> Term) -> Term {
+    public static func fact(_ name: String, _ arguments: Term...) -> Term {
+        return ._term(name: lit(name), arguments: arguments)
+    }
+
+    public subscript(terms: Term...) -> Term {
+        guard case .val(_) = self else { fatalError() }
+        return ._term(name: self, arguments: terms)
+    }
+
+    /////
+
+    public static func rule(_ name: Term, _ arguments: Term..., body: () -> Term) -> Term {
+        guard case .val(_) = name else { fatalError() }
         return ._rule(name: name, arguments: arguments, body: body())
     }
+
+    public static func rule(_ name: String, _ arguments: Term..., body: () -> Term) -> Term {
+        return ._rule(name: lit(name), arguments: arguments, body: body())
+    }
+
+    public static func =>(lhs: Term, rhs: Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = rhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: lhs)
+    }
+
+    public static func =>(lhs: () -> Term, rhs: Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = rhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: lhs())
+    }
+
+    public static func |-(lhs: Term, rhs: Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: rhs)
+    }
+
+    public static func |-(lhs: Term, rhs: () -> Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: rhs())
+    }
+
+    public static func ⊢(lhs: Term, rhs: Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: rhs)
+    }
+
+    public static func ⊢(lhs: Term, rhs: () -> Term) -> Term {
+      guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
+      return ._rule(name: name, arguments: arguments, body: rhs())
+    }
+
+    /////
 
     public static func &&(lhs: Term, rhs: Term) -> Term {
         return .conjunction(lhs, rhs)
     }
 
+    public static func ∧(lhs: Term, rhs: Term) -> Term {
+        return .conjunction(lhs, rhs)
+    }
+
+    /////
+
     public static func ||(lhs: Term, rhs: Term) -> Term {
         return .disjunction(lhs, rhs)
     }
 
+    public static func ∨(lhs: Term, rhs: Term) -> Term {
+        return .conjunction(lhs, rhs)
+    }
+
+    /////
+
     public static func ~=~(lhs: Term, rhs: Term) -> Term {
-        return ._term(name: "lk.~=~", arguments: [lhs, rhs])
+        return ._term(name: lit("lk.~=~"), arguments: [lhs, rhs])
     }
 
 }
+
 
 extension Term: Hashable {
 
@@ -111,12 +180,12 @@ extension Term: CustomStringConvertible {
             return "\(value)"
         case let ._term(name, arguments):
             return arguments.isEmpty
-                ? name
-                : "\(name)(\(arguments.map({ $0.description }).joined(separator: ", ")))"
+                ? name.description
+                : "\(name.description)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
         case let ._rule(name, arguments, body):
             let head = arguments.isEmpty
-                ? name
-                : "\(name)(\(arguments.map({ $0.description }).joined(separator: ", ")))"
+                ? name.description
+                : "\(name.description)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
             return "(\(head) ⊢ \(body))"
         case let .conjunction(lhs, rhs):
             return "(\(lhs) ∧ \(rhs))"
@@ -125,4 +194,10 @@ extension Term: CustomStringConvertible {
         }
     }
 
+}
+
+extension Term : ExpressibleByStringLiteral {
+    public init(stringLiteral : String) {
+        self = .lit(stringLiteral)
+    }
 }

@@ -58,7 +58,7 @@ struct Realizer: IteratorProtocol {
         self.logger?.log(message: goal.description, fontAttributes: [.bold])
 
         // Check for the built-in `~=~/2` predicate.
-        if case ._term("lk.~=~", let args) = goal {
+        if case ._term(.lit("lk.~=~"), let args) = goal {
             assert(args.count == 2)
             if let nodeResult = self.unify(goal: args[0], fact: args[1]) {
                 if self.goals.count > 1 {
