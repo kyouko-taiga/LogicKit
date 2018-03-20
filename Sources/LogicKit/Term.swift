@@ -118,7 +118,7 @@ public enum Term {
     }
 
     public static func ∨(lhs: Term, rhs: Term) -> Term {
-        return .conjunction(lhs, rhs)
+        return .disjunction(lhs, rhs)
     }
 
     /////
