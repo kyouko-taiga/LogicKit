@@ -95,8 +95,8 @@ class LogicKitTests: XCTestCase {
         let mia   : Term = "mia"
         let happy : Term = "happy"
         let kb: KnowledgeBase = [
-            play [mia],
-            { play [mia] && play[mia] } => happy [mia],
+            play[mia],
+            { play[mia] && play[mia] } => happy[mia],
         ]
 
         let answers0 = Array(kb.ask(happy[mia]))
@@ -108,24 +108,24 @@ class LogicKitTests: XCTestCase {
         XCTAssertEqual(answers1[0]   , ["who": mia])
 
         XCTAssertEqual(
-          { play [mia] && play[mia] } => happy [mia],
-          ( play [mia] && play[mia] ) => happy [mia]
+          { play[mia] && play[mia] } => happy[mia],
+          (play[mia] && play[mia]) => happy[mia]
         )
         XCTAssertEqual(
-          { play [mia] && play[mia] } => happy [mia],
-          happy [mia] |- { play [mia] && play[mia] }
+          { play[mia] && play[mia] } => happy[mia],
+          happy[mia] |- { play[mia] && play[mia] }
         )
         XCTAssertEqual(
-          { play [mia] && play[mia] } => happy [mia],
-          happy [mia] |- ( play [mia] && play[mia] )
+          { play[mia] && play[mia] } => happy[mia],
+          happy[mia] |- (play[mia] && play[mia])
         )
         XCTAssertEqual(
-          { play [mia] && play[mia] } => happy [mia],
-          happy [mia] ⊢ { play [mia] ∧ play[mia] }
+          { play[mia] && play[mia] } => happy[mia],
+          happy[mia] ⊢ { play[mia] ∧ play[mia] }
         )
         XCTAssertEqual(
-          { play [mia] && play[mia] } => happy [mia],
-          happy [mia] ⊢ ( play [mia] ∧ play[mia] )
+          { play[mia] && play[mia] } => happy[mia],
+          happy[mia] ⊢ (play[mia] ∧ play[mia])
         )
     }
 
