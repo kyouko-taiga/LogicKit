@@ -40,7 +40,7 @@ public enum Term {
 
     // MARK: EDSL
 
-    public static func lit<T>(_ value: T) -> Term where T: Hashable & CustomStringConvertible {
+    public static func lit<T>(_ value: T) -> Term where T: Hashable {
         return .val(AnyHashable(value))
     }
 
