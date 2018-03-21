@@ -58,7 +58,7 @@ public struct Grammar {
     public static let fact: Parser<Term> =
         ".fact(" ~~> string.amid(ws.?) ~~ (comma ~~> arguments).? <~~ ")"
         <!-- "a fact"
-        ^^ { val in ._term(name: .lit(val.0), arguments: val.1 ?? []) }
+        ^^ { val in ._term(name: val.0, arguments: val.1 ?? []) }
 
     public static let arguments =
         (variable | literal | fact).many(separatedBy: comma) <~~ ws.?
@@ -70,7 +70,7 @@ public struct Grammar {
         (".rule(" ~~> string.amid(ws.?) ~~ (comma ~~> arguments).? <~~ ")") ~~
         (lbrace ~~> term.amid(ws.?).amid(newlines.?) <~~ rbrace)
         //(lbrace ~~> term.amid(ws.?) <~~ rbrace)
-        ^^ { val in ._rule(name: .lit(val.0.0), arguments: val.0.1 ?? [], body: val.1) }
+        ^^ { val in ._rule(name: val.0.0, arguments: val.0.1 ?? [], body: val.1) }
 
     public static let lbrace = Lexer.character("{").amid(ws.?)
     public static let rbrace = Lexer.character("}").amid(ws.?)

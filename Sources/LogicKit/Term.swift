@@ -9,8 +9,8 @@ public enum Term {
 
     case `var`(String)
     case val(AnyHashable)
-    indirect case _term(name: Term, arguments: [Term])
-    indirect case _rule(name: Term, arguments: [Term], body: Term)
+    indirect case _term(name: String, arguments: [Term])
+    indirect case _rule(name: String, arguments: [Term], body: Term)
 
     indirect case conjunction(Term, Term)
     indirect case disjunction(Term, Term)
@@ -47,28 +47,31 @@ public enum Term {
     /////
 
     public static func fact(_ name: Term, _ arguments: Term...) -> Term {
-        guard case .val(_) = name else { fatalError() }
+        guard case let .val(val) = name else { fatalError() }
+        guard let name = val as? String else { fatalError() }
         return ._term(name: name, arguments: arguments)
     }
 
     public static func fact(_ name: String, _ arguments: Term...) -> Term {
-        return ._term(name: lit(name), arguments: arguments)
+        return ._term(name: name, arguments: arguments)
     }
 
     public subscript(terms: Term...) -> Term {
-        guard case .val(_) = self else { fatalError() }
-        return ._term(name: self, arguments: terms)
+        guard case let .val(val) = self else { fatalError() }
+        guard let name = val as? String else { fatalError() }
+        return ._term(name: name, arguments: terms)
     }
 
     /////
 
     public static func rule(_ name: Term, _ arguments: Term..., body: () -> Term) -> Term {
-        guard case .val(_) = name else { fatalError() }
+        guard case let .val(val) = name else { fatalError() }
+        guard let name = val as? String else { fatalError() }
         return ._rule(name: name, arguments: arguments, body: body())
     }
 
     public static func rule(_ name: String, _ arguments: Term..., body: () -> Term) -> Term {
-        return ._rule(name: lit(name), arguments: arguments, body: body())
+        return ._rule(name: name, arguments: arguments, body: body())
     }
 
     public static func =>(lhs: Term, rhs: Term) -> Term {
@@ -124,7 +127,7 @@ public enum Term {
     /////
 
     public static func ~=~(lhs: Term, rhs: Term) -> Term {
-        return ._term(name: lit("lk.~=~"), arguments: [lhs, rhs])
+        return ._term(name: "lk.~=~", arguments: [lhs, rhs])
     }
 
 }
