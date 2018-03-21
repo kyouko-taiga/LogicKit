@@ -181,11 +181,11 @@ extension Term: CustomStringConvertible {
         case let ._term(name, arguments):
             return arguments.isEmpty
                 ? name.description
-                : "\(name.description)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
+                : "\(name)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
         case let ._rule(name, arguments, body):
             let head = arguments.isEmpty
                 ? name.description
-                : "\(name.description)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
+                : "\(name)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
             return "(\(head) ⊢ \(body))"
         case let .conjunction(lhs, rhs):
             return "(\(lhs) ∧ \(rhs))"
