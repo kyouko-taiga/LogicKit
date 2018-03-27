@@ -49,4 +49,9 @@ extension Dictionary where Key == String, Value == Term {
         return result
     }
 
+    public subscript(name: Term) -> Term? {
+        guard case let .var(val) = name else { fatalError() }
+        return self[val]
+    }
+
 }
