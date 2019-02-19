@@ -54,15 +54,6 @@ public struct KnowledgeBase {
 }
 
 extension KnowledgeBase: Hashable {
-
-    public var hashValue: Int {
-        return hash(self.knowledge.map({ $0.hashValue }))
-    }
-
-    public static func ==(lhs: KnowledgeBase, rhs: KnowledgeBase) -> Bool {
-        return lhs.knowledge == rhs.knowledge
-    }
-
 }
 
 extension KnowledgeBase: Collection {

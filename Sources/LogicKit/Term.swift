@@ -62,43 +62,6 @@ public enum Term {
 }
 
 extension Term: Hashable {
-
-    public var hashValue: Int {
-        switch self {
-        case let .var(name):
-            return name.hashValue
-        case let .val(value):
-            return value.hashValue
-        case let ._term(name, arguments):
-            return hash([name.hashValue] + arguments.map({ $0.hashValue }))
-        case let ._rule(name, arguments, body):
-            return hash([name.hashValue, body.hashValue] + arguments.map({ $0.hashValue }))
-        case let .conjunction(lhs, rhs):
-            return hash([23, lhs.hashValue, rhs.hashValue])
-        case let .disjunction(lhs, rhs):
-            return hash([29, lhs.hashValue, rhs.hashValue])
-        }
-    }
-
-    public static func ==(lhs: Term, rhs: Term) -> Bool {
-        switch (lhs, rhs) {
-        case let (.var(lname), .var(rname)):
-            return lname == rname
-        case let (.val(lvalue), .val(rvalue)):
-            return lvalue == rvalue
-        case let (._term(lname, largs), ._term(rname, rargs)):
-            return (lname == rname) && (largs == rargs)
-        case let (._rule(lname, largs, lbody), ._rule(rname, rargs, rbody)):
-            return (lname == rname) && (largs == rargs) && (lbody == rbody)
-        case let (.conjunction(llhs, lrhs), .conjunction(rlhs, rrhs)):
-            return (llhs == rlhs) && (lrhs == rrhs)
-        case let (.disjunction(llhs, lrhs), .disjunction(rlhs, rrhs)):
-            return (llhs == rlhs) && (lrhs == rrhs)
-        default:
-            return false
-        }
-    }
-
 }
 
 extension Term: CustomStringConvertible {
