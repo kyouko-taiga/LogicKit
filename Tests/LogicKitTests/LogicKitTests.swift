@@ -90,11 +90,4 @@ class LogicKitTests: XCTestCase {
         XCTAssertEqual(answer?["result"], nat(value: 2))
     }
 
-    static var allTests = [
-        ("testConstantFacts"     , testConstantFacts),
-        ("testFactsWithVariables", testFactsWithVariables),
-        ("testSimpleDeductions"  , testSimpleDeductions),
-        ("testRecursion"         , testRecursion),
-    ]
-
 }

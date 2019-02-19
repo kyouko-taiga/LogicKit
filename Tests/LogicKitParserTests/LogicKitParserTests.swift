@@ -2,6 +2,8 @@
 @testable import LogicKitParser
 import XCTest
 
+#if swift(>=4.0)
+#else
 class LogicKitParserTests: XCTestCase {
 
     func testParseVariable() {
@@ -79,14 +81,5 @@ class LogicKitParserTests: XCTestCase {
             ".var(\"x\") || .var(\"y\") && .var(\"z\")"), .var("x") || .var("y") && .var("z"))
     }
 
-    static var allTests = [
-        ("testParseVariable"   , testParseVariable),
-        ("testParseLiteral"    , testParseLiteral),
-        ("testParseFact"       , testParseFact),
-        ("testParseRule"       , testParseRule),
-        ("testParseConjunction", testParseConjunction),
-        ("testParseDisjunction", testParseDisjunction),
-        ("testParsePrecedence" , testParsePrecedence),
-    ]
-
 }
+#endif
