@@ -1,4 +1,4 @@
-// swift-tools-version:4.0
+// swift-tools-version:4.2
 
 import PackageDescription
 
@@ -9,7 +9,7 @@ let package = Package(
         .executable(name: "lki", targets: ["lki"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/kyouko-taiga/Parsey", .branch("master")),
+        .package(url: "https://github.com/rxwei/Parsey.git", .revision("32f653044f95c880cd0cce929cfef29efb07ee5b")),
     ],
     targets: [
         .target(name: "LogicKit"),

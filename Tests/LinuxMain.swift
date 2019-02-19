@@ -1,9 +1,8 @@
-@testable import LogicKitTests
-@testable import LogicKitParserTests
 import XCTest
 
-XCTMain([
-     testCase(BindingMapTests.allTests),
-     testCase(LogicKitTests.allTests),
-     testCase(LogicKitParserTests.allTests),
-])
+import LogicKitTests
+
+var tests = [XCTestCaseEntry]()
+tests += LogicKitTests.__allTests()
+
+XCTMain(tests)

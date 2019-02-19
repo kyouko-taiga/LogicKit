@@ -58,12 +58,4 @@ class BindingMapTests: XCTestCase {
         XCTAssertEqual(bindingMap.merged(with: ["x": .var("z")])["x"], .var("z"))
     }
 
-    static var allTests = [
-        ("testShallowWalk", testShallowWalk),
-        ("testDeepWalk"   , testDeepWalk),
-        ("testReified"    , testReified),
-        ("testBinding"    , testBinding),
-        ("testMerged"     , testMerged),
-    ]
-
 }

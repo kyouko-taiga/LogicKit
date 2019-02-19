@@ -132,12 +132,4 @@ class LogicKitTests: XCTestCase {
         )
     }
 
-    static var allTests = [
-        ("testConstantFacts"     , testConstantFacts),
-        ("testFactsWithVariables", testFactsWithVariables),
-        ("testSimpleDeductions"  , testSimpleDeductions),
-        ("testRecursion"         , testRecursion),
-        ("testLitSyntax"         , testLitSyntax),
-    ]
-
 }

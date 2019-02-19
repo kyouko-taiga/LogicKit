@@ -1,6 +1,7 @@
 import LogicKit
 import Parsey
 
+@available(swift, deprecated: 4.1)
 public struct Grammar {
 
     // MARK: Knowledge base (entry point of the grammar)
@@ -30,7 +31,7 @@ public struct Grammar {
         ^^ { Term.lit(Int($0)!) }
 
     public static let boolLiteral =
-        (Lexer.regex("true") | Lexer.regex("false")) <!-- "a bool literal"
+        (Lexer.token("true") | Lexer.token("false")) <!-- "a bool literal"
         ^^ { Term.lit($0 == "true") }
 
     public static let strLiteral =
@@ -43,15 +44,15 @@ public struct Grammar {
 
     public static let disjunction = conjunction.amid(ws.?).infixedLeft(by: orOperator)
     public static let orOperator  =
-        Lexer.regex("\\|\\|").amid(newlines.?)
+        Lexer.token("||").amid(newlines.?)
         <!-- "an or operator"
-        ^^ { op in { Term.disjunction($0, $1) } }
+        ^^ { _ in { Term.disjunction($0, $1) } }
 
     public static let conjunction = atom.amid(ws.?).infixedLeft(by: andOperator)
     public static let andOperator =
-        Lexer.regex("&&").amid(newlines.?)
+        Lexer.token("&&").amid(newlines.?)
         <!-- "an and operator"
-        ^^ { op in { Term.conjunction($0, $1) } }
+        ^^ { _ in { Term.conjunction($0, $1) } }
 
     public static let atom = variable | literal | fact
 

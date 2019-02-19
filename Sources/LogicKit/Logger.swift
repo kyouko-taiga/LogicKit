@@ -40,7 +40,7 @@ public struct DefaultLogger: Logger {
     public init() {}
 
     public func log(message: String, terminator: String, fontAttributes: [FontAttribute]) {
-        let attributes = fontAttributes.flatMap({
+        let attributes = fontAttributes.compactMap({
             switch $0 {
             case .bold:
                 return "\u{001B}[1m"
