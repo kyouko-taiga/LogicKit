@@ -1,6 +1,7 @@
 import LogicKit
 import Parsey
 
+@available(swift, deprecated: 4.1)
 public struct Grammar {
 
     // MARK: Knowledge base (entry point of the grammar)
