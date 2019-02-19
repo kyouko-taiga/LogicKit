@@ -80,7 +80,7 @@ extension Term: CustomStringConvertible {
             let head = arguments.isEmpty
                 ? name
                 : "\(name)(\(arguments.map({ $0.description }).joined(separator: ", ")))"
-            return "(\(head) ⊢ \(body))"
+            return "(\(head) :- \(body))"
         case let .conjunction(lhs, rhs):
             return "(\(lhs) ∧ \(rhs))"
         case let .disjunction(lhs, rhs):
