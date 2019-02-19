@@ -217,7 +217,7 @@ import LogicKit
 > The schemes of the auto-generated package might require some manual configuration.
 > Please refer to Xcode's documentation for more information on that end.
 
-### Using the interpreter
+### Using the interpreter (deprecated for Swift 4.2+)
 
 LogicKit comes with an interpreter, `lki`,
 that you can use to design and/or debug knowledge bases.
