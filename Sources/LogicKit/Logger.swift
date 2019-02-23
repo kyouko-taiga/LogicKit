@@ -37,22 +37,30 @@ extension Logger {
 
 public struct DefaultLogger: Logger {
 
-  public init() {}
+  public init(useFontAttributes: Bool = true) {
+    self.useFontAttributes = useFontAttributes
+  }
+
+  public let useFontAttributes: Bool
 
   public func log(message: String, terminator: String, fontAttributes: [FontAttribute]) {
-    let attributes = fontAttributes.compactMap({
-      switch $0 {
-      case .bold:
-        return "\u{001B}[1m"
-      case .dim:
-        return "\u{001B}[2m"
-      case .foreground(let color):
-        return "\u{001B}[\(DefaultLogger.foreground[color] ?? "39m")"
-      case .background(let color):
-        return "\u{001B}[\(DefaultLogger.background[color] ?? "40m")"
-      }
-    }).joined(separator: "")
-    print("\(attributes)\(message)\u{001B}[0m", terminator: terminator)
+    if useFontAttributes {
+      let attributes = fontAttributes.compactMap({
+        switch $0 {
+        case .bold:
+          return "\u{001B}[1m"
+        case .dim:
+          return "\u{001B}[2m"
+        case .foreground(let color):
+          return "\u{001B}[\(DefaultLogger.foreground[color] ?? "39m")"
+        case .background(let color):
+          return "\u{001B}[\(DefaultLogger.background[color] ?? "40m")"
+        }
+      }).joined(separator: "")
+      print("\(attributes)\(message)\u{001B}[0m", terminator: terminator)
+    } else {
+      print(message, terminator: terminator)
+    }
   }
 
   static let foreground: [FontColor: String] = [
