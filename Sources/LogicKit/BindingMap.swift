@@ -35,13 +35,13 @@ extension Dictionary where Key == String, Value == Term {
     }
   }
 
-  func binding(_ name: String, to term: Term) -> Dictionary {
+  func binding(_ name: String, to term: Term) -> BindingMap {
     var result = self
     result[name] = term
     return result
   }
 
-  func merged(with other: Dictionary) -> Dictionary {
+  func merged(with other: BindingMap) -> BindingMap {
     var result = self
     for (name, term) in other {
       result[name] = term
