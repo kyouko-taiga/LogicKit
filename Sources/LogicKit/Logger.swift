@@ -22,15 +22,15 @@ public protocol Logger {
 extension Logger {
 
   public func log(message: String) {
-    self.log(message: message, terminator: "\n", fontAttributes: [])
+    log(message: message, terminator: "\n", fontAttributes: [])
   }
 
   public func log(message: String, fontAttributes: [FontAttribute]) {
-    self.log(message: message, terminator: "\n", fontAttributes: fontAttributes)
+    log(message: message, terminator: "\n", fontAttributes: fontAttributes)
   }
 
   public func log(message: String, terminator: String) {
-    self.log(message: message, terminator: terminator, fontAttributes: [])
+    log(message: message, terminator: terminator, fontAttributes: [])
   }
 
 }

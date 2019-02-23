@@ -5,7 +5,7 @@ extension Dictionary where Key == String, Value == Term {
   func reified() -> [String: Term] {
     var result: [String: Term] = [:]
     for (name, term) in self {
-      result[name] = self.deepWalk(term)
+      result[name] = deepWalk(term)
     }
     return result
   }
@@ -14,7 +14,7 @@ extension Dictionary where Key == String, Value == Term {
     switch term {
     case .var(let name):
       return self[name].map({
-        self.shallowWalk($0)
+        shallowWalk($0)
       }) ?? term
     default:
       return term
@@ -22,14 +22,14 @@ extension Dictionary where Key == String, Value == Term {
   }
 
   func deepWalk(_ term: Term) -> Term {
-    let walked = self.shallowWalk(term)
+    let walked = shallowWalk(term)
     switch walked {
     case ._term(name: let name, arguments: let arguments):
-      return ._term(name: name, arguments: arguments.map(self.deepWalk))
+      return ._term(name: name, arguments: arguments.map(deepWalk))
     case .conjunction(let lhs, let rhs):
-      return .conjunction(self.deepWalk(lhs), self.deepWalk(rhs))
+      return .conjunction(deepWalk(lhs), deepWalk(rhs))
     case .disjunction(let lhs, let rhs):
-      return .disjunction(self.deepWalk(lhs), self.deepWalk(rhs))
+      return .disjunction(deepWalk(lhs), deepWalk(rhs))
     default:
       return walked
     }

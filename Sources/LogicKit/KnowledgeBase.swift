@@ -10,7 +10,7 @@ public struct KnowledgeBase {
       preconditionFailure("invalid query")
     default:
       return RealizerAlternator(realizers: query.goals.map({
-        Realizer(goals: $0, knowledge: self.refreshed, logger: logger)
+        Realizer(goals: $0, knowledge: refreshed, logger: logger)
       }))
     }
   }
@@ -26,7 +26,7 @@ public struct KnowledgeBase {
   }
 
   var refreshed: KnowledgeBase {
-    return KnowledgeBase(knowledge: self.knowledge.map(self.renameVariables))
+    return KnowledgeBase(knowledge: knowledge.map(renameVariables))
   }
 
   func renameVariables(of term: Term) -> Term {
@@ -34,16 +34,16 @@ public struct KnowledgeBase {
     case .var(let name):
       return .var(name + "'")
     case ._term(let name, let arguments):
-      return ._term(name: name, arguments: arguments.map(self.renameVariables))
+      return ._term(name: name, arguments: arguments.map(renameVariables))
     case ._rule(let name, let arguments, let body):
       return ._rule(
         name     : name,
-        arguments: arguments.map(self.renameVariables),
-        body     : self.renameVariables(of: body))
+        arguments: arguments.map(renameVariables),
+        body     : renameVariables(of: body))
     case .conjunction(let lhs, let rhs):
-      return .conjunction(self.renameVariables(of: lhs), self.renameVariables(of: rhs))
+      return .conjunction(renameVariables(of: lhs), renameVariables(of: rhs))
     case .disjunction(let lhs, let rhs):
-      return .disjunction(self.renameVariables(of: lhs), self.renameVariables(of: rhs))
+      return .disjunction(renameVariables(of: lhs), renameVariables(of: rhs))
     default:
       return term
     }
@@ -61,23 +61,23 @@ extension KnowledgeBase: Collection {
   public typealias Element = Term
 
   public var startIndex: Int {
-    return self.knowledge.startIndex
+    return knowledge.startIndex
   }
 
   public var endIndex: Int {
-    return self.knowledge.endIndex
+    return knowledge.endIndex
   }
 
   public func index(after i: Int) -> Int {
-    return self.knowledge.index(after: i)
+    return knowledge.index(after: i)
   }
 
   public func makeIterator() -> Array<Term>.Iterator {
-    return self.knowledge.makeIterator()
+    return knowledge.makeIterator()
   }
 
   public subscript(position: Int) -> Term {
-    return self.knowledge[position]
+    return knowledge[position]
   }
 
 }
@@ -93,7 +93,7 @@ extension KnowledgeBase: ExpressibleByArrayLiteral {
 extension KnowledgeBase: CustomStringConvertible {
 
   public var description: String {
-    return self.knowledge.description
+    return knowledge.description
   }
 
 }

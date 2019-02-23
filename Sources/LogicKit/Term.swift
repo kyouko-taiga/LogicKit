@@ -27,7 +27,7 @@ public enum Term {
   }
 
   var goals: [[Term]] {
-    switch self.dnf {
+    switch dnf {
     case .conjunction(let lhs, let rhs):
       assert((lhs.goals.count == 1) && (rhs.goals.count == 1))
       return [lhs.goals[0] + rhs.goals[0]]

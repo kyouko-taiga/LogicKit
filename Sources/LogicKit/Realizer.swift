@@ -5,15 +5,15 @@ public struct RealizerAlternator: IteratorProtocol, Sequence {
   }
 
   public mutating func next() -> [String: Term]? {
-    while !self.realizers.isEmpty {
-      guard let result = self.realizers[self.index].next() else {
-        self.realizers.remove(at: index)
-        if !self.realizers.isEmpty {
-          self.index = self.index % self.realizers.count
+    while !realizers.isEmpty {
+      guard let result = realizers[index].next() else {
+        realizers.remove(at: index)
+        if !realizers.isEmpty {
+          index = index % realizers.count
         }
         continue
       }
-      self.index = (self.index + 1) % self.realizers.count
+      index = (index + 1) % realizers.count
       return result
     }
     return nil
@@ -44,33 +44,33 @@ struct Realizer: IteratorProtocol {
 
   mutating func next() -> [String: Term]? {
     // If we have a subrealizer running, pull its results first.
-    if let result = self.subRealizer?.next() {
+    if let result = subRealizer?.next() {
       return result
     } else {
-      if self.subRealizer != nil {
-        self.logger?.log(message: "backtacking", fontAttributes: [.dim])
-        self.subRealizer = nil
+      if subRealizer != nil {
+        logger?.log(message: "backtacking", fontAttributes: [.dim])
+        subRealizer = nil
       }
     }
 
-    let goal = self.goals.first!
-    self.logger?.log(message: "Attempting to realize ", terminator: "")
-    self.logger?.log(message: goal.description, fontAttributes: [.bold])
+    let goal = goals.first!
+    logger?.log(message: "Attempting to realize ", terminator: "")
+    logger?.log(message: goal.description, fontAttributes: [.bold])
 
     // Check for the built-in `~=~/2` predicate.
     if case ._term("lk.~=~", let args) = goal {
       assert(args.count == 2)
-      if let nodeResult = self.unify(goal: args[0], fact: args[1]) {
-        if self.goals.count > 1 {
-          let subGoals     = self.goals.dropFirst().map(nodeResult.deepWalk)
-          self.subRealizer = RealizerAlternator(realizers: [
+      if let nodeResult = unify(goal: args[0], fact: args[1]) {
+        if goals.count > 1 {
+          let subGoals     = goals.dropFirst().map(nodeResult.deepWalk)
+          subRealizer = RealizerAlternator(realizers: [
             Realizer(
               goals         : subGoals,
-              knowledge     : self.knowledge,
+              knowledge     : knowledge,
               parentBindings: nodeResult,
-              logger        : self.logger)
+              logger        : logger)
             ])
-          if let branchResult = self.subRealizer!.next() {
+          if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
               .reified()
@@ -84,21 +84,21 @@ struct Realizer: IteratorProtocol {
     }
 
     // Look for the next root clause.
-    while self.clauseIndex != self.knowledge.endIndex {
-      let clause = self.knowledge[self.clauseIndex]
-      self.clauseIndex += 1
+    while clauseIndex != knowledge.endIndex {
+      let clause = knowledge[clauseIndex]
+      clauseIndex += 1
 
-      self.logger?.log(message: "using "    , terminator: "", fontAttributes: [.dim])
-      self.logger?.log(message: "\(clause) ")
+      logger?.log(message: "using "    , terminator: "", fontAttributes: [.dim])
+      logger?.log(message: "\(clause) ")
 
       switch (goal, clause) {
       case (.val(let lvalue), .val(let rvalue)) where lvalue == rvalue:
-        if self.goals.count > 1 {
-          let subGoals     = Array(self.goals.dropFirst())
-          self.subRealizer = RealizerAlternator(realizers: [
-            Realizer(goals: subGoals, knowledge: self.knowledge, logger: self.logger)
+        if goals.count > 1 {
+          let subGoals     = Array(goals.dropFirst())
+          subRealizer = RealizerAlternator(realizers: [
+            Realizer(goals: subGoals, knowledge: knowledge, logger: logger)
           ])
-          if let branchResult = self.subRealizer!.next() {
+          if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
               .reified()
@@ -106,17 +106,17 @@ struct Realizer: IteratorProtocol {
         }
 
       case (._term(_, _), ._term(_, _)):
-        if let nodeResult = self.unify(goal: goal, fact: clause) {
-          if self.goals.count > 1 {
-            let subGoals     = self.goals.dropFirst().map(nodeResult.deepWalk)
-            self.subRealizer = RealizerAlternator(realizers: [
+        if let nodeResult = unify(goal: goal, fact: clause) {
+          if goals.count > 1 {
+            let subGoals     = goals.dropFirst().map(nodeResult.deepWalk)
+            subRealizer = RealizerAlternator(realizers: [
               Realizer(
                 goals         : subGoals,
-                knowledge     : self.knowledge,
+                knowledge     : knowledge,
                 parentBindings: nodeResult,
-                logger        : self.logger)
+                logger        : logger)
             ])
-            if let branchResult = self.subRealizer!.next() {
+            if let branchResult = subRealizer!.next() {
               return branchResult
                 .merged(with: parentBindings)
                 .reified()
@@ -133,8 +133,8 @@ struct Realizer: IteratorProtocol {
 
         // First we try to unify the rule head with the goal.
         let head: Term = ._term(name: goalName, arguments: ruleArguments)
-        if let nodeResult = self.unify(goal: goal, fact: head) {
-          let subGoals  = self.goals.dropFirst()
+        if let nodeResult = unify(goal: goal, fact: head) {
+          let subGoals  = goals.dropFirst()
             .map(nodeResult.deepWalk)
           let ruleGoals = ruleBody.goals
             .map({ $0.map(nodeResult.deepWalk) + subGoals })
@@ -146,14 +146,14 @@ struct Realizer: IteratorProtocol {
           // to `0` before we try satisfy `p($x, q(0))`. But if `$x` wasn't renamed,
           // we'd be trying to unify `$x` with `q($x)` while recursing.
 
-          self.subRealizer = RealizerAlternator(realizers: ruleGoals.map({
+          subRealizer = RealizerAlternator(realizers: ruleGoals.map({
             Realizer(
               goals         : $0,
-              knowledge     : self.knowledge.refreshed,
+              knowledge     : knowledge.refreshed,
               parentBindings: nodeResult,
-              logger        : self.logger)
+              logger        : logger)
           }))
-          if let branchResult = self.subRealizer!.next() {
+          if let branchResult = subRealizer!.next() {
             return nodeResult
               .merged(with: branchResult)
               .merged(with: parentBindings)
@@ -206,7 +206,7 @@ struct Realizer: IteratorProtocol {
       // Try unify subterms (i.e. arguments).
       var intermediateResult = bindings
       for (larg, rarg) in zip(largs, rargs) {
-        if let b = self.unify(goal: larg, fact: rarg, knowing: intermediateResult) {
+        if let b = unify(goal: larg, fact: rarg, knowing: intermediateResult) {
           intermediateResult = b
         } else {
           return nil
