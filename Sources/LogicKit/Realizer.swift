@@ -87,14 +87,9 @@ public final class Realizer: RealizerBase {
       assert(args.count == 2)
       if let nodeResult = unify(goal: args[0], fact: args[1]) {
         if goals.count > 1 {
-          let subGoals     = goals.dropFirst().map(nodeResult.deepWalk)
-          subRealizer = RealizerAlternator(realizers: [
-            Realizer(
-              goals         : subGoals,
-              knowledge     : knowledge,
-              parentBindings: nodeResult,
-              logger        : logger)
-            ])
+          let subGoals = goals.dropFirst().map(nodeResult.deepWalk)
+          subRealizer = Realizer(
+            goals: subGoals, knowledge: knowledge, parentBindings: nodeResult, logger: logger)
           if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
@@ -119,10 +114,8 @@ public final class Realizer: RealizerBase {
       switch (goal, clause) {
       case (.val(let lvalue), .val(let rvalue)) where lvalue == rvalue:
         if goals.count > 1 {
-          let subGoals     = Array(goals.dropFirst())
-          subRealizer = RealizerAlternator(realizers: [
-            Realizer(goals: subGoals, knowledge: knowledge, logger: logger)
-          ])
+          let subGoals = Array(goals.dropFirst())
+          subRealizer = Realizer(goals: subGoals, knowledge: knowledge, logger: logger)
           if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
@@ -133,14 +126,9 @@ public final class Realizer: RealizerBase {
       case (._term(_, _), ._term(_, _)):
         if let nodeResult = unify(goal: goal, fact: clause) {
           if goals.count > 1 {
-            let subGoals     = goals.dropFirst().map(nodeResult.deepWalk)
-            subRealizer = RealizerAlternator(realizers: [
-              Realizer(
-                goals         : subGoals,
-                knowledge     : knowledge,
-                parentBindings: nodeResult,
-                logger        : logger)
-            ])
+            let subGoals = goals.dropFirst().map(nodeResult.deepWalk)
+            subRealizer = Realizer(
+              goals: subGoals, knowledge: knowledge, parentBindings: nodeResult, logger: logger)
             if let branchResult = subRealizer!.next() {
               return branchResult
                 .merged(with: parentBindings)
@@ -173,10 +161,10 @@ public final class Realizer: RealizerBase {
 
           subRealizer = RealizerAlternator(realizers: ruleGoals.map({
             Realizer(
-              goals         : $0,
-              knowledge     : knowledge.refreshed,
+              goals: $0,
+              knowledge: knowledge.refreshed,
               parentBindings: nodeResult,
-              logger        : logger)
+              logger: logger)
           }))
           if let branchResult = subRealizer!.next() {
             return nodeResult

@@ -8,10 +8,18 @@ public struct KnowledgeBase {
     switch query {
     case .var(_), ._rule(_, _, _):
       preconditionFailure("invalid query")
+
     default:
-      return RealizerAlternator(realizers: query.goals.map({
+      // Build an array of realizers for each conjunction of goals in the query.
+      let realizers = query.goals.map {
         Realizer(goals: $0, knowledge: refreshed, logger: logger)
-      }))
+      }
+
+      // Return the goal realizer(s).
+      assert(!realizers.isEmpty)
+      return realizers.count > 1
+        ? RealizerAlternator(realizers: realizers)
+        : realizers[0]
     }
   }
 
