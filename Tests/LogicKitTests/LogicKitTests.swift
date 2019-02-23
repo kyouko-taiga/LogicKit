@@ -85,7 +85,7 @@ class LogicKitTests: XCTestCase {
 
     let query: Term = .fact("diff", nat(value: 2), nat(value: 4), .var("result"))
     let answers = kb.ask(query)
-    let answer  = answers.next()
+    var answer  = answers.next()
     XCTAssertNotNil(answer)
     XCTAssertEqual(answer?["result"], nat(value: 2))
   }

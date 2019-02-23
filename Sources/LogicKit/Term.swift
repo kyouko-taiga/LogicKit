@@ -38,6 +38,24 @@ public enum Term {
     }
   }
 
+  var variables: Set<String> {
+    switch self {
+    case .var(let x):
+      return [x]
+    case ._term(name: _, arguments: let subterms):
+      return subterms.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
+    case ._rule(name: _, arguments: let subterms, body: let body):
+      let subtermVariables = subterms.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
+      return body.variables.union(subtermVariables)
+    case .conjunction(let lhs, let rhs):
+      return lhs.variables.union(rhs.variables)
+    case .disjunction(let lhs, let rhs):
+      return lhs.variables.union(rhs.variables)
+    default:
+      return []
+    }
+  }
+
   // MARK: EDSL
 
   public static func lit<T>(_ value: T) -> Term where T: Hashable {

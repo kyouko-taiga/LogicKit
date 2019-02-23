@@ -1,5 +1,5 @@
 /// Base class for realizers.
-public class RealizerBase: IteratorProtocol, Sequence {
+class RealizerBase: IteratorProtocol {
 
   public typealias Element = [String: Term]
 
@@ -12,7 +12,7 @@ public class RealizerBase: IteratorProtocol, Sequence {
 }
 
 /// Realizer that alternatively pulls results from multiple sub-realizers.
-public final class RealizerAlternator: RealizerBase {
+final class RealizerAlternator: RealizerBase {
 
   init<S>(realizers: S) where S: Sequence, S.Element == Realizer {
     self.realizers = Array(realizers)
@@ -39,9 +39,9 @@ public final class RealizerAlternator: RealizerBase {
 }
 
 /// Standard goal realizer.
-public final class Realizer: RealizerBase {
+final class Realizer: RealizerBase {
 
-  internal init(
+  init(
     goals: [Term],
     knowledge: KnowledgeBase,
     parentBindings: BindingMap = [:],

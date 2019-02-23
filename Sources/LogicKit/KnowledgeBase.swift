@@ -4,7 +4,7 @@ public struct KnowledgeBase {
     self.knowledge = knowledge
   }
 
-  public func ask(_ query: Term, logger: Logger? = nil) -> RealizerBase {
+  public func ask(_ query: Term, logger: Logger? = nil) -> AnswerSet {
     switch query {
     case .var(_), ._rule(_, _, _):
       preconditionFailure("invalid query")
@@ -17,9 +17,10 @@ public struct KnowledgeBase {
 
       // Return the goal realizer(s).
       assert(!realizers.isEmpty)
-      return realizers.count > 1
+      let iterator = realizers.count > 1
         ? RealizerAlternator(realizers: realizers)
         : realizers[0]
+      return AnswerSet(realizer: iterator, variables: query.variables)
     }
   }
 
