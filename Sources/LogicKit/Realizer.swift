@@ -1,10 +1,24 @@
-public struct RealizerAlternator: IteratorProtocol, Sequence {
+/// Base class for realizers.
+public class RealizerBase: IteratorProtocol, Sequence {
+
+  public typealias Element = [String: Term]
+
+  fileprivate init() {}
+
+  public func next() -> [String: Term]? {
+    fatalError("not implemented")
+  }
+
+}
+
+/// Realizer that alternatively pulls results from multiple sub-realizers.
+public final class RealizerAlternator: RealizerBase {
 
   init<S>(realizers: S) where S: Sequence, S.Element == Realizer {
     self.realizers = Array(realizers)
   }
 
-  public mutating func next() -> [String: Term]? {
+  public override func next() -> [String: Term]? {
     while !realizers.isEmpty {
       guard let result = realizers[index].next() else {
         realizers.remove(at: index)
@@ -28,7 +42,8 @@ public struct RealizerAlternator: IteratorProtocol, Sequence {
 
 }
 
-struct Realizer: IteratorProtocol {
+/// Standard goal realizer.
+public final class Realizer: RealizerBase {
 
   init(
     goals         : [Term],
@@ -42,7 +57,7 @@ struct Realizer: IteratorProtocol {
     self.logger         = logger
   }
 
-  mutating func next() -> [String: Term]? {
+  public override func next() -> [String: Term]? {
     // If we have a subrealizer running, pull its results first.
     if let result = subRealizer?.next() {
       return result

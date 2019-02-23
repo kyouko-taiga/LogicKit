@@ -4,7 +4,7 @@ public struct KnowledgeBase {
     self.knowledge = knowledge
   }
 
-  public func ask(_ query: Term, logger: Logger? = nil) -> RealizerAlternator {
+  public func ask(_ query: Term, logger: Logger? = nil) -> RealizerBase {
     switch query {
     case .var(_), ._rule(_, _, _):
       preconditionFailure("invalid query")
