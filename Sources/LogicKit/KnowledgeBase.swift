@@ -46,9 +46,9 @@ public struct KnowledgeBase {
       return ._term(name: name, arguments: arguments.map(renameVariables))
     case ._rule(let name, let arguments, let body):
       return ._rule(
-        name     : name,
+        name: name,
         arguments: arguments.map(renameVariables),
-        body     : renameVariables(of: body))
+        body: renameVariables(of: body))
     case .conjunction(let lhs, let rhs):
       return .conjunction(renameVariables(of: lhs), renameVariables(of: rhs))
     case .disjunction(let lhs, let rhs):

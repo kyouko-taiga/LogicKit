@@ -150,7 +150,6 @@ public enum Term {
 
 }
 
-
 extension Term: Hashable {
 }
 

@@ -13,9 +13,7 @@ extension Dictionary where Key == String, Value == Term {
   func shallowWalk(_ term: Term) -> Term {
     switch term {
     case .var(let name):
-      return self[name].map({
-        shallowWalk($0)
-      }) ?? term
+      return self[name].map({ shallowWalk($0) }) ?? term
     default:
       return term
     }
