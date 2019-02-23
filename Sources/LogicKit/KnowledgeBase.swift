@@ -81,10 +81,6 @@ extension KnowledgeBase: Collection {
     return knowledge.index(after: i)
   }
 
-  public func makeIterator() -> Array<Term>.Iterator {
-    return knowledge.makeIterator()
-  }
-
   public subscript(position: Int) -> Term {
     return knowledge[position]
   }
