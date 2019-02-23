@@ -38,7 +38,7 @@ class BindingMapTests: XCTestCase {
       "y": .var("z"),
       "z": .fact("t", .var("w"))
     ]
-    let reifiedMap = bindingMap.reified()
+    let reifiedMap = bindingMap.reified
 
     XCTAssertEqual(reifiedMap["w"], .fact("a"))
     XCTAssertEqual(reifiedMap["x"], .fact("t", .fact("a")))

@@ -9,7 +9,7 @@ public struct AnswerSet: IteratorProtocol, Sequence {
   private var variables: Set<String>
 
   public func next() -> BindingMap? {
-    return realizer.next()?.reified().filter { variables.contains($0.key) }
+    return realizer.next()?.reified.filter { variables.contains($0.key) }
   }
 
 }

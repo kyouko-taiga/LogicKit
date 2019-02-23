@@ -2,7 +2,7 @@ public typealias BindingMap = Dictionary<String, Term>
 
 extension Dictionary where Key == String, Value == Term {
 
-  func reified() -> [String: Term] {
+  var reified: [String: Term] {
     var result: [String: Term] = [:]
     for (name, term) in self {
       result[name] = deepWalk(term)
