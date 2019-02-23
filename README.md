@@ -217,46 +217,6 @@ import LogicKit
 > The schemes of the auto-generated package might require some manual configuration.
 > Please refer to Xcode's documentation for more information on that end.
 
-### Using the interpreter
-
-LogicKit comes with an interpreter, `lki`,
-that you can use to design and/or debug knowledge bases.
-To use the interpreter, first clone this repository:
-
-```bash
-git clone git@github.com:kyouko-taiga/LogicKit.git
-```
-
-You can then compile `lki`:
-
-```bash
-swift build --configuration release --product lki
-```
-
-Which will create a binary `lki` in `.build/release/`.
-Feel free to symlink copy or symlink this binary to include it in your path.
-
-To use `lki`, first write your knowledge base in some file, for instance `nat.kb`:
-
-```swift
-.fact("add", zero, y, y),
-.rule("add", .fact("succ", x), y, z) {
-  .fact("add", x, .fact("succ", y), z)
-}
-```
-
-Then, invoke the interpreter with a path to your knowledge base:
-
-```bash
-lki /path/to/nat.kb
-```
-
-You'll be presented a prompt that lets you issue queries against your knowledge base.
-
-> Note that `lki` can only read knowledge bases written with the LogicKit syntax,
-> meaning that you can't use the full power of Swift
-> like you would be able to in actual Swift sources.
-
 ## License
 
 LogicKit is licensed under the MIT License.
