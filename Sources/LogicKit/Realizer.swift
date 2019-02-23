@@ -155,13 +155,18 @@ final class Realizer: RealizerBase {
           // to `0` before we try satisfy `p($x, q(0))`. But if `$x` wasn't renamed,
           // we'd be trying to unify `$x` with `q($x)` while recursing.
 
-          subRealizer = RealizerAlternator(realizers: ruleGoals.map({
+          let subRealizers = ruleGoals.map {
             Realizer(
               goals: $0,
               knowledge: knowledge.refreshed,
               parentBindings: nodeResult,
               logger: logger)
-          }))
+          }
+          assert(!subRealizers.isEmpty)
+          subRealizer = subRealizers.count > 1
+            ? RealizerAlternator(realizers: subRealizers)
+            : subRealizers[0]
+
           if let branchResult = subRealizer!.next() {
             return nodeResult
               .merged(with: branchResult)
