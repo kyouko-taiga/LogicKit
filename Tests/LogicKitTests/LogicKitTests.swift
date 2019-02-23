@@ -90,6 +90,37 @@ class LogicKitTests: XCTestCase {
     XCTAssertEqual(answer?["result"], nat(value: 2))
   }
 
+  func testBacktracking() {
+    let x: Term = .var("x")
+    let y: Term = .var("y")
+    let z: Term = .var("z")
+    let w: Term = .var("w")
+
+    let kb: KnowledgeBase = [
+      .fact("link", "0", "1"),
+      .fact("link", "1", "2"),
+      .fact("link", "2", "4"),
+      .fact("link", "1", "3"),
+      .fact("link", "3", "4"),
+      .rule("path", x, y, .fact("c", x, .fact("c", y, "nil"))) {
+        .fact("link", x, y)
+      },
+      .rule("path", x, y, .fact("c", x, w)) {
+        .fact("link", x, z) && .fact("path", z, y, w)
+      }
+    ]
+
+    let query: Term = .fact("path", "0", "4", .var("nodes"))
+    let answers = Array(kb.ask(query))
+
+    // There should be two paths from 0 to 4.
+    XCTAssertEqual(answers.count, 2)
+
+    // All paths should bind the variable `nodes`.
+    XCTAssertNotNil(answers[0]["nodes"])
+    XCTAssertNotNil(answers[1]["nodes"])
+  }
+
   func testLitSyntax() {
     let play  : Term = "play"
     let mia   : Term = "mia"

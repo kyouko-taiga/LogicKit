@@ -12,8 +12,10 @@ extension BindingMapTests {
 
 extension LogicKitTests {
     static let __allTests = [
+        ("testBacktracking", testBacktracking),
         ("testConstantFacts", testConstantFacts),
         ("testFactsWithVariables", testFactsWithVariables),
+        ("testLitSyntax", testLitSyntax),
         ("testRecursion", testRecursion),
         ("testSimpleDeductions", testSimpleDeductions),
     ]
