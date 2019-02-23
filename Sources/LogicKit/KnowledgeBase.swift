@@ -6,7 +6,7 @@ public struct KnowledgeBase {
 
   public func ask(_ query: Term, logger: Logger? = nil) -> AnswerSet {
     switch query {
-    case .var(_), ._rule(_, _, _):
+    case .var, ._rule:
       preconditionFailure("invalid query")
 
     default:

@@ -125,7 +125,7 @@ final class Realizer: RealizerBase {
           }
         }
 
-      case (._term(_, _), ._term(_, _)):
+      case (._term, ._term):
         if let nodeResult = unify(goal: goal, fact: clause) {
           if goals.count > 1 {
             let subGoals = goals.dropFirst().map(nodeResult.deepWalk)
