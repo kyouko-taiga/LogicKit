@@ -46,6 +46,8 @@ struct Realizer: IteratorProtocol {
         // If we have a subrealizer running, pull its results first.
         if let result = self.subRealizer?.next() {
             return result
+              .merged(with: parentBindings)
+              .reified()
         } else {
             if self.subRealizer != nil {
                 self.logger?.log(message: "backtacking", fontAttributes: [.dim])
