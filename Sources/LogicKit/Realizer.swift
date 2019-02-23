@@ -73,7 +73,6 @@ final class Realizer: RealizerBase {
       if let result = sub.next() {
         return result
           .merged(with: parentBindings)
-          .reified()
       } else {
         logger?.log(message: "backtacking", fontAttributes: [.dim])
         subRealizer = nil
@@ -95,12 +94,10 @@ final class Realizer: RealizerBase {
           if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
-              .reified()
           }
         } else {
           return nodeResult
             .merged(with: parentBindings)
-            .reified()
         }
       }
     }
@@ -121,7 +118,6 @@ final class Realizer: RealizerBase {
           if let branchResult = subRealizer!.next() {
             return branchResult
               .merged(with: parentBindings)
-              .reified()
           }
         }
 
@@ -134,12 +130,10 @@ final class Realizer: RealizerBase {
             if let branchResult = subRealizer!.next() {
               return branchResult
                 .merged(with: parentBindings)
-                .reified()
             }
           } else {
             return nodeResult
               .merged(with: parentBindings)
-              .reified()
           }
         }
 
@@ -172,7 +166,6 @@ final class Realizer: RealizerBase {
             return nodeResult
               .merged(with: branchResult)
               .merged(with: parentBindings)
-              .reified()
           }
         }
 
