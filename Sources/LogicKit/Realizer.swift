@@ -69,12 +69,12 @@ public final class Realizer: RealizerBase {
 
   public override func next() -> [String: Term]? {
     // If we have a subrealizer running, pull its results first.
-    if let result = subRealizer?.next() {
-      return result
-        .merged(with: parentBindings)
-        .reified()
-    } else {
-      if subRealizer != nil {
+    if let sub = subRealizer {
+      if let result = sub.next() {
+        return result
+          .merged(with: parentBindings)
+          .reified()
+      } else {
         logger?.log(message: "backtacking", fontAttributes: [.dim])
         subRealizer = nil
       }
