@@ -71,6 +71,8 @@ public final class Realizer: RealizerBase {
     // If we have a subrealizer running, pull its results first.
     if let result = subRealizer?.next() {
       return result
+        .merged(with: parentBindings)
+        .reified()
     } else {
       if subRealizer != nil {
         logger?.log(message: "backtacking", fontAttributes: [.dim])
