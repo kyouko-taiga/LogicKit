@@ -18,6 +18,9 @@ public final class RealizerAlternator: RealizerBase {
     self.realizers = Array(realizers)
   }
 
+  private var index = 0
+  private var realizers: [Realizer]
+
   public override func next() -> [String: Term]? {
     while !realizers.isEmpty {
       guard let result = realizers[index].next() else {
@@ -33,29 +36,36 @@ public final class RealizerAlternator: RealizerBase {
     return nil
   }
 
-  public func makeIterator() -> RealizerAlternator {
-    return self
-  }
-
-  var index    : Int = 0
-  var realizers: [Realizer]
-
 }
 
 /// Standard goal realizer.
 public final class Realizer: RealizerBase {
 
-  init(
-    goals         : [Term],
-    knowledge     : KnowledgeBase,
+  internal init(
+    goals: [Term],
+    knowledge: KnowledgeBase,
     parentBindings: BindingMap = [:],
-    logger        : Logger? = nil)
+    logger: Logger? = nil)
   {
-    self.goals          = goals
-    self.knowledge      = knowledge
+    self.goals = goals
+    self.knowledge = knowledge
     self.parentBindings = parentBindings
-    self.logger         = logger
+    self.logger = logger
   }
+
+  /// The goals to realize.
+  private let goals: [Term]
+  /// The knowledge base.
+  private let knowledge: KnowledgeBase
+  /// The bindings already  determined by the parent realizer.
+  private let parentBindings: BindingMap
+  /// The optional logger, for debug purpose.
+  private var logger: Logger?
+
+  /// The index of the next clause to check.
+  private var clauseIndex = 0
+  /// The subrealizer, if any.
+  private var subRealizer: RealizerBase? = nil
 
   public override func next() -> [String: Term]? {
     // If we have a subrealizer running, pull its results first.
@@ -235,13 +245,5 @@ public final class Realizer: RealizerBase {
       return nil
     }
   }
-
-  let goals         : [Term]
-  let knowledge     : KnowledgeBase
-  let parentBindings: BindingMap
-  var logger        : Logger?
-
-  var clauseIndex   : Int = 0
-  var subRealizer   : RealizerAlternator? = nil
 
 }
