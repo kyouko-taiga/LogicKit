@@ -42,17 +42,37 @@ public enum Term {
     switch self {
     case .var(let x):
       return [x]
-    case ._term(name: _, arguments: let subterms):
-      return subterms.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
-    case ._rule(name: _, arguments: let subterms, body: let body):
-      let subtermVariables = subterms.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
+    case .val:
+      return []
+    case ._term(_, let args):
+      return args.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
+    case ._rule(_, let args, let body):
+      let subtermVariables = args.map({ $0.variables }).reduce(Set<String>(), { $0.union($1) })
       return body.variables.union(subtermVariables)
     case .conjunction(let lhs, let rhs):
       return lhs.variables.union(rhs.variables)
     case .disjunction(let lhs, let rhs):
       return lhs.variables.union(rhs.variables)
-    default:
-      return []
+    }
+  }
+
+  func renaming(_ variables: Set<String>) -> Term {
+    switch self {
+    case .var(let x) where variables.contains(x):
+      return .var(x + "'")
+    case .var, .val:
+      return self
+    case ._term(let name, let args):
+      return ._term(name: name, arguments: args.map({ $0.renaming(variables) }))
+    case ._rule(let name, let args, let body):
+      return ._rule(
+        name: name,
+        arguments: args.map({ $0.renaming(variables) }),
+        body: body.renaming(variables))
+    case .conjunction(let lhs, let rhs):
+      return .conjunction(lhs.renaming(variables), rhs.renaming(variables))
+    case .disjunction(let lhs, let rhs):
+      return .disjunction(lhs.renaming(variables), rhs.renaming(variables))
     }
   }
 

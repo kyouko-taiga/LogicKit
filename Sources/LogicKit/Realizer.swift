@@ -51,6 +51,17 @@ final class Realizer: RealizerBase {
     self.knowledge = knowledge
     self.parentBindings = parentBindings
     self.logger = logger
+
+    // Identify which part of the knowledge base the realizer should explore.
+    assert(goals.count > 0)
+    switch goals.first! {
+    case ._term(let name, _):
+      clauseIterator = knowledge.predicates[name].map { AnyIterator($0.makeIterator()) }
+    case ._rule(let name, _, _):
+      clauseIterator = knowledge.predicates[name].map { AnyIterator($0.makeIterator()) }
+    default:
+      clauseIterator = AnyIterator(knowledge.literals.makeIterator())
+    }
   }
 
   /// The goals to realize.
@@ -62,8 +73,8 @@ final class Realizer: RealizerBase {
   /// The optional logger, for debug purpose.
   private var logger: Logger?
 
-  /// The index of the next clause to check.
-  private var clauseIndex = 0
+  /// An iterator on the knowledge clauses to check.
+  private var clauseIterator: AnyIterator<Term>?
   /// The subrealizer, if any.
   private var subRealizer: RealizerBase? = nil
 
@@ -103,10 +114,7 @@ final class Realizer: RealizerBase {
     }
 
     // Look for the next root clause.
-    while clauseIndex != knowledge.endIndex {
-      let clause = knowledge[clauseIndex]
-      clauseIndex += 1
-
+    while let clause = clauseIterator?.next() {
       logger?.log(message: "using "    , terminator: "", fontAttributes: [.dim])
       logger?.log(message: "\(clause) ")
 
@@ -137,39 +145,36 @@ final class Realizer: RealizerBase {
           }
         }
 
-      case let (._term(goalName, _), ._rule(ruleName, ruleArguments, ruleBody))
-        where goalName == ruleName:
+      case let (._term(goalName, _), ._rule(ruleName, ruleArguments, ruleBody)):
+        assert(goalName == ruleName)
 
         // First we try to unify the rule head with the goal.
         let head: Term = ._term(name: goalName, arguments: ruleArguments)
         if let nodeResult = unify(goal: goal, fact: head) {
-          let subGoals  = goals.dropFirst()
+          let subGoals = goals.dropFirst()
             .map(nodeResult.deepWalk)
           let ruleGoals = ruleBody.goals
             .map({ $0.map(nodeResult.deepWalk) + subGoals })
+          assert(!ruleGoals.isEmpty)
 
-          // Note that we have to make sure all variables of the sub-realizer's knowldge
-          // are fresh, otherwise they may collide with the ones we already bound. For
-          // instance, consider a recursive rule `p(q($x), $y) ⊢ p($x, q($y))` and a
-          // goal `p($z, 0)`. In this example, `$z` would get bound to `q($x)` and `$y`
-          // to `0` before we try satisfy `p($x, q(0))`. But if `$x` wasn't renamed,
-          // we'd be trying to unify `$x` with `q($x)` while recursing.
-
+          // We have to make sure bound knowledge variables are renamed in the sub-realizer's
+          // knowledge, otherwise they may collide with the ones we already bound. For instance,
+          // consider a recursive rule `p(q($x), $y) ⊢ p($x, q($y))` and a goal `p($z, 0)`. `$z`
+          // would get bound to `q($x)` and `$y` to `0` before we try satisfy `p($x, q(0))`. But
+          // if `$x` wasn't renamed, we'd be trying to unify `$x` with `q($x)` while recursing.
+          let subKnowledge = knowledge.renaming(Set(clause.variables))
           let subRealizers = ruleGoals.map {
             Realizer(
-              goals: $0,
-              knowledge: knowledge.refreshed,
-              parentBindings: nodeResult,
-              logger: logger)
+              goals: $0, knowledge: subKnowledge, parentBindings: nodeResult, logger: logger)
           }
-          assert(!subRealizers.isEmpty)
           subRealizer = subRealizers.count > 1
             ? RealizerAlternator(realizers: subRealizers)
             : subRealizers[0]
 
           if let branchResult = subRealizer!.next() {
-            return nodeResult
-              .merged(with: branchResult)
+            // Note the `branchResult` already contains the bindings of `nodeResult`, as the these
+            // will have been merged by sub-realizer.
+            return branchResult
               .merged(with: parentBindings)
           }
         }

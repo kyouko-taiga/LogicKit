@@ -1,8 +1,48 @@
-public struct KnowledgeBase {
+public struct KnowledgeBase: Hashable {
+
+  public init(predicates: [String: [Term]], literals: Set<Term>) {
+    let terms = predicates.values.joined().concatenated(with: literals)
+    for term in terms {
+      switch term {
+      case ._term, ._rule:
+        continue
+      default:
+        fatalError("Cannot use '\(term)' as a predicate.")
+      }
+    }
+
+    self.predicates = predicates
+    self.literals = literals
+  }
 
   public init(knowledge: [Term]) {
-    self.knowledge = knowledge
+    /// Extract predicates and literals from the given list of terms.
+    for term in knowledge {
+      switch term {
+      case ._term(let name, _):
+        let group = predicates[name] ?? []
+        predicates[name] = group + [term]
+
+      case ._rule(let name, _, _):
+        let group = predicates[name] ?? []
+        predicates[name] = group + [term]
+
+      case .val:
+        literals.insert(term)
+
+      case .var, .conjunction, .disjunction:
+        fatalError("Cannot use '\(term)' as a predicate.")
+      }
+    }
   }
+
+  /// The list of predicates in the knowledge base, grouped by functor.
+  public private(set) var predicates: [String: [Term]] = [:]
+  /// The list of isolated literals in the knowledge base.
+  public private(set) var literals: Set<Term> = []
+
+  /// The number of predicates and literals in the knowledge base.
+  public var count: Int { return predicates.values.reduce(0, { $0 + $1.count }) + literals.count }
 
   public func ask(_ query: Term, logger: Logger? = nil) -> AnswerSet {
     switch query {
@@ -12,7 +52,7 @@ public struct KnowledgeBase {
     default:
       // Build an array of realizers for each conjunction of goals in the query.
       let realizers = query.goals.map {
-        Realizer(goals: $0, knowledge: refreshed, logger: logger)
+        Realizer(goals: $0, knowledge: renaming(query.variables), logger: logger)
       }
 
       // Return the goal realizer(s).
@@ -24,18 +64,13 @@ public struct KnowledgeBase {
     }
   }
 
-  public func union(with other: KnowledgeBase) -> KnowledgeBase {
-    var newClauses = self.knowledge
-    for clause in other.knowledge {
-      if !newClauses.contains(clause) {
-        newClauses.append(clause)
-      }
+  func renaming(_ variables: Set<String>) -> KnowledgeBase {
+    var result = KnowledgeBase(knowledge: [])
+    for (name, terms) in predicates {
+      result.predicates[name] = terms.map { $0.renaming(variables) }
     }
-    return KnowledgeBase(knowledge: newClauses)
-  }
-
-  var refreshed: KnowledgeBase {
-    return KnowledgeBase(knowledge: knowledge.map(renameVariables))
+    result.literals = literals
+    return result
   }
 
   func renameVariables(of term: Term) -> Term {
@@ -58,31 +93,26 @@ public struct KnowledgeBase {
     }
   }
 
-  public let knowledge: [Term]
+  public static func + (lhs: KnowledgeBase, rhs: KnowledgeBase) -> KnowledgeBase {
+    var result = KnowledgeBase(knowledge: [])
+    for (name, terms) in lhs.predicates {
+      result.predicates[name] = terms
+      if let right = rhs.predicates[name] {
+        result.predicates[name]!.append(contentsOf: right)
+      }
+    }
+    result.literals = lhs.literals.union(rhs.literals)
+    return result
+  }
 
 }
 
-extension KnowledgeBase: Hashable {
-}
-
-extension KnowledgeBase: Collection {
+extension KnowledgeBase: Sequence {
 
   public typealias Element = Term
 
-  public var startIndex: Int {
-    return knowledge.startIndex
-  }
-
-  public var endIndex: Int {
-    return knowledge.endIndex
-  }
-
-  public func index(after i: Int) -> Int {
-    return knowledge.index(after: i)
-  }
-
-  public subscript(position: Int) -> Term {
-    return knowledge[position]
+  public func makeIterator() -> AnyIterator<Element> {
+    return predicates.values.joined().concatenated(with: literals).makeIterator()
   }
 
 }
@@ -98,7 +128,7 @@ extension KnowledgeBase: ExpressibleByArrayLiteral {
 extension KnowledgeBase: CustomStringConvertible {
 
   public var description: String {
-    return knowledge.description
+    return "[" + self.map({ "\($0)" }).joined(separator: ", ") + "]"
   }
 
 }
