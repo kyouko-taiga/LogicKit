@@ -97,29 +97,14 @@ public enum Term {
     return ._rule(name: name, arguments: arguments, body: lhs)
   }
 
-  public static func =>(lhs: () -> Term, rhs: Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = rhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: lhs())
-  }
-
   public static func |-(lhs: Term, rhs: Term) -> Term {
     guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
     return ._rule(name: name, arguments: arguments, body: rhs)
   }
 
-  public static func |-(lhs: Term, rhs: () -> Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: rhs())
-  }
-
   public static func ⊢(lhs: Term, rhs: Term) -> Term {
     guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
     return ._rule(name: name, arguments: arguments, body: rhs)
-  }
-
-  public static func ⊢(lhs: Term, rhs: () -> Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: rhs())
   }
 
   /////
