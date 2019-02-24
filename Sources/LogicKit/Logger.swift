@@ -15,23 +15,9 @@ public enum FontAttribute {
 
 public protocol Logger {
 
-  func log(message: String, terminator: String, fontAttributes: [FontAttribute])
-
-}
-
-extension Logger {
-
-  public func log(message: String) {
-    log(message: message, terminator: "\n", fontAttributes: [])
-  }
-
-  public func log(message: String, fontAttributes: [FontAttribute]) {
-    log(message: message, terminator: "\n", fontAttributes: fontAttributes)
-  }
-
-  public func log(message: String, terminator: String) {
-    log(message: message, terminator: terminator, fontAttributes: [])
-  }
+  func didBacktrack()
+  func willRealize(goal: Term)
+  func willAttempt(clause: Term)
 
 }
 
@@ -42,6 +28,20 @@ public struct DefaultLogger: Logger {
   }
 
   public let useFontAttributes: Bool
+
+  public func didBacktrack() {
+    log(message: "backtacking", fontAttributes: [.dim])
+  }
+
+  public func willRealize(goal: Term) {
+    log(message: "Attempting to realize ", terminator: "")
+    log(message: "\(goal)", fontAttributes: [.bold])
+  }
+
+  public func willAttempt(clause: Term) {
+    log(message: "using "    , terminator: "", fontAttributes: [.dim])
+    log(message: "\(clause) ")
+  }
 
   public func log(message: String, terminator: String, fontAttributes: [FontAttribute]) {
     if useFontAttributes {
@@ -61,6 +61,18 @@ public struct DefaultLogger: Logger {
     } else {
       print(message, terminator: terminator)
     }
+  }
+
+  public func log(message: String) {
+    log(message: message, terminator: "\n", fontAttributes: [])
+  }
+
+  public func log(message: String, fontAttributes: [FontAttribute]) {
+    log(message: message, terminator: "\n", fontAttributes: fontAttributes)
+  }
+
+  public func log(message: String, terminator: String) {
+    log(message: message, terminator: terminator, fontAttributes: [])
   }
 
   static let foreground: [FontColor: String] = [

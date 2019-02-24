@@ -85,14 +85,13 @@ final class Realizer: RealizerBase {
         return result
           .merged(with: parentBindings)
       } else {
-        logger?.log(message: "backtacking", fontAttributes: [.dim])
+        logger?.didBacktrack()
         subRealizer = nil
       }
     }
 
     let goal = goals.first!
-    logger?.log(message: "Attempting to realize ", terminator: "")
-    logger?.log(message: "\(goal)", fontAttributes: [.bold])
+    logger?.willRealize(goal: goal)
 
     // Check for the built-in `~=~/2` predicate.
     if case ._term("lk.~=~", let args) = goal {
@@ -115,8 +114,7 @@ final class Realizer: RealizerBase {
 
     // Look for the next root clause.
     while let clause = clauseIterator?.next() {
-      logger?.log(message: "using "    , terminator: "", fontAttributes: [.dim])
-      logger?.log(message: "\(clause) ")
+      logger?.willAttempt(clause: clause)
 
       switch (goal, clause) {
       case (.val(let lvalue), .val(let rvalue)) where lvalue == rvalue:
