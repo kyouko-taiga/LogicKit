@@ -92,7 +92,7 @@ final class Realizer: RealizerBase {
 
     let goal = goals.first!
     logger?.log(message: "Attempting to realize ", terminator: "")
-    logger?.log(message: goal.description, fontAttributes: [.bold])
+    logger?.log(message: "\(goal)", fontAttributes: [.bold])
 
     // Check for the built-in `~=~/2` predicate.
     if case ._term("lk.~=~", let args) = goal {
@@ -145,11 +145,11 @@ final class Realizer: RealizerBase {
           }
         }
 
-      case let (._term(goalName, _), ._rule(ruleName, ruleArguments, ruleBody)):
+      case let (._term(goalName, _), ._rule(ruleName, ruleArgs, ruleBody)):
         assert(goalName == ruleName)
 
         // First we try to unify the rule head with the goal.
-        let head: Term = ._term(name: goalName, arguments: ruleArguments)
+        let head: Term = ._term(name: goalName, arguments: ruleArgs)
         if let nodeResult = unify(goal: goal, fact: head) {
           let subGoals = goals.dropFirst()
             .map(nodeResult.deepWalk)

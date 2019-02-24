@@ -22,8 +22,8 @@ extension Dictionary where Key == String, Value == Term {
   func deepWalk(_ term: Term) -> Term {
     let walked = shallowWalk(term)
     switch walked {
-    case ._term(name: let name, arguments: let arguments):
-      return ._term(name: name, arguments: arguments.map(deepWalk))
+    case ._term(let name, let args):
+      return ._term(name: name, arguments: args.map(deepWalk))
     case .conjunction(let lhs, let rhs):
       return .conjunction(deepWalk(lhs), deepWalk(rhs))
     case .disjunction(let lhs, let rhs):

@@ -47,7 +47,7 @@ public struct KnowledgeBase: Hashable {
   public func ask(_ query: Term, logger: Logger? = nil) -> AnswerSet {
     switch query {
     case .var, ._rule:
-      preconditionFailure("invalid query")
+      fatalError("invalid query")
 
     default:
       // Build an array of realizers for each conjunction of goals in the query.
@@ -77,12 +77,12 @@ public struct KnowledgeBase: Hashable {
     switch term {
     case .var(let name):
       return .var(name + "'")
-    case ._term(let name, let arguments):
-      return ._term(name: name, arguments: arguments.map(renameVariables))
-    case ._rule(let name, let arguments, let body):
+    case ._term(let name, let args):
+      return ._term(name: name, arguments: args.map(renameVariables))
+    case ._rule(let name, let args, let body):
       return ._rule(
         name: name,
-        arguments: arguments.map(renameVariables),
+        arguments: args.map(renameVariables),
         body: renameVariables(of: body))
     case .conjunction(let lhs, let rhs):
       return .conjunction(renameVariables(of: lhs), renameVariables(of: rhs))

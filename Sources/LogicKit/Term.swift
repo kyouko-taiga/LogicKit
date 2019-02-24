@@ -85,7 +85,7 @@ public enum Term {
   /////
 
   public static func fact(_ name: Term, _ arguments: Term...) -> Term {
-    guard case let .val(val) = name else { fatalError() }
+    guard case .val(let val) = name else { fatalError() }
     guard let name = val as? String else { fatalError() }
     return ._term(name: name, arguments: arguments)
   }
@@ -96,14 +96,14 @@ public enum Term {
 
   public subscript(terms: Term...) -> Term {
     guard case ._term(let name, let subterms) = self, subterms.isEmpty
-      else { fatalError("\(self) cannot be coerced into a functor") }
+      else { fatalError("Cannot coerce '\(self)' into a functor") }
     return ._term(name: name, arguments: terms)
   }
 
   /////
 
   public static func rule(_ name: Term, _ arguments: Term..., body: () -> Term) -> Term {
-    guard case let .val(val) = name else { fatalError() }
+    guard case .val(let val) = name else { fatalError() }
     guard let name = val as? String else { fatalError() }
     return ._rule(name: name, arguments: arguments, body: body())
   }
@@ -113,18 +113,21 @@ public enum Term {
   }
 
   public static func =>(lhs: Term, rhs: Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = rhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: lhs)
+    guard case ._term(let name, let args) = rhs
+      else { fatalError("Cannot use '\(self)' as a rule head.") }
+    return ._rule(name: name, arguments: args, body: lhs)
   }
 
   public static func |-(lhs: Term, rhs: Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: rhs)
+    guard case ._term(let name, let args) = lhs
+      else { fatalError("Cannot use '\(self)' as a rule head.") }
+    return ._rule(name: name, arguments: args, body: rhs)
   }
 
   public static func ⊢(lhs: Term, rhs: Term) -> Term {
-    guard case let ._term(name: name, arguments: arguments) = lhs else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: rhs)
+    guard case ._term(let name, let args) = lhs
+      else { fatalError("Cannot use '\(self)' as a rule head.") }
+    return ._rule(name: name, arguments: args, body: rhs)
   }
 
   /////
@@ -162,22 +165,22 @@ extension Term: CustomStringConvertible {
 
   public var description: String {
     switch self {
-    case let .var(name):
+    case .var(let name):
       return "$\(name)"
-    case let .val(value):
+    case .val(let value):
       return "\(value)"
-    case let ._term(name, arguments):
-      return arguments.isEmpty
-        ? name.description
-        : "\(name)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
-    case let ._rule(name, arguments, body):
-      let head = arguments.isEmpty
-        ? name.description
-        : "\(name)[\(arguments.map({ $0.description }).joined(separator: ", "))]"
+    case ._term(let name, let args):
+      return args.isEmpty
+        ? "\(name)"
+        : "\(name)[\(args.map({ "\($0)" }).joined(separator: ", "))]"
+    case ._rule(let name, let args, let body):
+      let head = args.isEmpty
+        ? "\(name)"
+        : "\(name)[\(args.map({ "\($0)" }).joined(separator: ", "))]"
       return "(\(head) ⊢ \(body))"
-    case let .conjunction(lhs, rhs):
+    case .conjunction(let lhs, let rhs):
       return "(\(lhs) ∧ \(rhs))"
-    case let .disjunction(lhs, rhs):
+    case .disjunction(let lhs, let rhs):
       return "(\(lhs) ∨ \(rhs))"
     }
   }
