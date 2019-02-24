@@ -12,7 +12,7 @@ A program is expressed in terms of relations,
 and computation in terms of queries over these relations.
 The beauty of logic programming is that
 we no longer have to tell a computer *how* to compute a result,
-but only describe the constrains it should respect.
+but only describe the constraints it should respect.
 For instance, the following Prolog snippet finds all the pairs of operands whose sum is 2.
 
 ```prolog
@@ -23,73 +23,79 @@ add(succ(X), Y, Z) :-
 ?- add(X, Y, succ(succ(zero))).
 ```
 
-This is nice and all, but as any other paradigm, logic programming isn't a fit-them-all solution.
-Let's imagine we've to program a complex user interface with a lot of stateful components.
-In fact, algorithms that are easily expressed in an imperative way
+Writing programs this way is arguably quite interesting.
+However, just as any other paradigm, logic programming isn't a fit-them-all solution.
+For instance, algorithms that are easily expressed in an imperative way
 often prove to be difficult to write in a functional logic programming style.
+This is why most modern programming languages, like Swift, are all about miying paradigms.
 
-But modern languages like Swift are all about mixing paradigms right?
 So why not bringing logic programming into the mix as well!
 With LogicKit, the above Prolog example can be rewritten entirely in Swift:
 
 ```swift
-let zero: Term = .lit("zero")
-let x   : Term = .var("x")
-let y   : Term = .var("y")
-let z   : Term = .var("z")
+let zero: Term = "zero"
+let x: Term = .var("x")
+let y: Term = .var("y")
+let z: Term = .var("z")
 
 let kb: KnowledgeBase = [
    .fact("add", zero, y, y),
-   .rule("add", .fact("succ", x), y, z) {
-     .fact("add", x, .fact("succ", y), z)
-   }
+   .fact("add", .fact("succ", x), y, z) |-
+     .fact("add", x, .fact("succ", y), z),
 ]
 
-let answers = kb.ask(.fact("add", x, y, .fact("succ", .fact("succ", zero))))
+var answers = kb.ask(.fact("add", x, y, .fact("succ", .fact("succ", zero))))
+for result in answers.prefix(3) {
+  print(result)
+}
 ```
 
-## Getting started
+## Getting Started
+
+The following is a quick *Getting Started* introduction the installation and use of LogicKit
+that only brushes over the library.
+You may refer want to refer to the *User Manual* for more details.
 
 ### Quick tutorial
 
 Like Prolog, LogicKit revolves around a knowledge base (or database),
 against which one can make queries.
 There are four constructs in LogicKit:
-literals (`Term.lit(_:)`) that denote atomic values,
-facts (`Term.fact(_:_:)`) that denote predicates,
-rules (`Term.rule(_:_:_:)`) that denote conditional facts and
+Facts (`Term.fact(_:_:)`) that denote predicates and propositions,
+rules (`Term.rule(_:_:_:)`) that denote conditional facts,
+literals (`Term.lit(_:)`) that denote atomic values, and
 variables (`Term.var(_:)`) that act as placeholders for other terms.
 
 Knowledge bases are nothing more than a collection of such constructs:
 
 ```swift
 let kb: KnowledgeBase = [
-  .fact("is effective against", .lit("water"), .lit("fire")),
-  .fact("is effective against", .lit("fire") , .lit("grass")),
-  .fact("is effective against", .lit("grass"), .lit("water")),
+  .fact("is effective against", .fact("water"), .fact("fire")),
+  .fact("is effective against", .fact("fire"), .fact("grass")),
+  .fact("is effective against", .fact("grass"), .fact("water")),
 
-  .fact("has type", .lit("Bulbasaur") , .lit("grass")),
-  .fact("has type", .lit("Squirtle")  , .lit("water")),
-  .fact("has type", .lit("Charmander"), .lit("fire")),
+  .fact("has type", .fact("Bulbasaur")), .fact("grass")),
+  .fact("has type", .fact("Squirtle")), .fact("water")),
+  .fact("has type", .fact("Charmander")), .fact("fire")),
 ]
 ```
 
-The above knowledge base only makes use of facts and literals.
+The above knowledge base only makes use of facts and propositions.
 It states for instance that *water is effective against fire*,
 or that *Squirtle has type water*.
 One can query such knowledge base as follows:
 
 ```swift
-var answers = kb.ask(.fact("has type", .lit("Squirtle"), .lit("water")))
+var answers = kb.ask(.fact("has type", .fact("Squirtle"), .fact("water")))
 ```
 
 Since there might be several answers to a single query,
-`Knowledge.ask(_:_:)` doesn't return a single yes/no answer.
+`Knowledge.ask(_:logger:)` doesn't return a single yes/no answer.
 Instead, it returns a sequence whose each element denote one correct answer.
 If the sequence is empty, then there isn't any solution.
 
 ```swift
-print("Squirtle has type water:" answers.next() != nil)
+print("Squirtle has type water:", answers.next() != nil)
 // Prints "Squirtle has type water: true"
 ```
 
@@ -111,20 +117,20 @@ if the type of `x` is effective against that of `y`.
 Now we can ask things like:
 
 ```swift
-let answers = kb.ask(.fact("is stronger", .lit("Charmander"), .lit("Bulbasaur")))
+var answers = kb.ask(.fact("is stronger", .fact("Charmander"), .fact("Bulbasaur")))
 ```
 
 or even more interestingly:
 
 ```swift
-let answers = kb.ask(.fact("is stronger", .var("a"), .var("b")))
+var answers = kb.ask(.fact("is stronger", .var("a"), .var("b")))
 ```
 
 Note that because the query involves variables,
 not only are we interested to know if it is satisfiable,
 but also for what binding of `a` and `b`.
-Well, in fact each element of the sequence returned by `Knowledge.ask(_:_:)`
-denotes such a binding:
+Well, in fact each element of the sequence returned by `Knowledge.ask(_:logger:)`
+denotes such binding:
 
 ```swift
 for binding in answers {
@@ -141,9 +147,9 @@ Note that since LogicKit is an EDSL,
 nothing prevents us from using the full power of Swift to make our definitions more readable:
 
 ```swift
-let bulbasaur : Term = .lit("Bulbasaur")
-let squirtle  : Term = .lit("Squirtle")
-let charmander: Term = .lit("Charmander")
+let bulbasaur: Term = "Bulbasaur"
+let squirtle: Term = "Squirtle"
+let charmander: Term = "Charmander"
 
 infix operator !>
 func !>(lhs: Term, rhs: Term) -> Term {
@@ -156,12 +162,15 @@ let kb: KnowledgeBase = [
   charmander !> bulbasaur,
 ]
 
-let answer = kb.ask(bulbasaur !> squirtle)
+var answer = kb.ask(bulbasaur !> squirtle)
 ```
+
+LogicKit offers a bunch of syntax sugars to improve the legibility of your code.
+Make sure to check the *User Manual* for a comprehensive documentation.
 
 ### Installation
 
-LogicKit is distributed in the form of a Switch package
+LogicKit is distributed in the form of a Swift package
 and can be integrated with the [Swift Package Manager](https://swift.org/package-manager/).
 
 Start by creating a new package (unless you already have one):
@@ -178,15 +187,19 @@ Then add LogicKit as a dependency to your package, from your `Package.swift` fil
 import PackageDescription
 
 let package = Package(
-    name: "MyLogicProgram",
-    dependencies: [
-        .package(url: "https://github.com/kyouko-taiga/LogicKit", from: "1.0.0"),
-    ],
-    targets: [
-        .target(name: "MyLogicProgram", dependencies: ["LogicKit"]),
-    ]
+  name: "MyLogicProgram",
+  dependencies: [
+    .package(url: "https://github.com/kyouko-taiga/LogicKit", .branch("master")),
+  ],
+  targets: [
+    .target(name: "MyLogicProgram", dependencies: ["LogicKit"]),
+  ]
 )
 ```
+
+> The master branch of the LogicKit always refers to the latest stable version of LogicKit, so
+> using `.branch("master")` to specify the dependency location guarantees you'll always pull the
+> latest version. See Swift Package Manager's documentation for alternative configurations.
 
 Make sure the Swift Package Manager is able to properly download, compile and link LogicKit
 with the following command:
@@ -213,7 +226,7 @@ import LogicKit
 > swift package generate-xcodeproj
 > ```
 >
-> It will create a `YourPackage.xcodeproj` directory you can edit with Xcode.
+> It will create a `MyLogicProgram.xcodeproj` directory you can edit with Xcode.
 > The schemes of the auto-generated package might require some manual configuration.
 > Please refer to Xcode's documentation for more information on that end.
 
