@@ -42,26 +42,26 @@ class LogicKitTests: XCTestCase {
 
   func testSimpleDeductions() {
     let kb: KnowledgeBase = [
-      .fact("play" , .lit("mia")),
-      .rule("happy", .lit("mia")) {
-        .fact("play", .lit("mia"))
+      .fact("play" , "mia"),
+      .rule("happy", "mia") {
+        .fact("play", "mia")
       },
     ]
 
-    let answers0 = Array(kb.ask(.fact("happy", .lit("mia"))))
+    let answers0 = Array(kb.ask(.fact("happy", "mia")))
     XCTAssertEqual(answers0.count, 1)
     XCTAssertEqual(answers0[0]   , [:])
 
     let answers1 = Array(kb.ask(.fact("happy", .var("who"))))
     XCTAssertEqual(answers1.count, 1)
-    XCTAssertEqual(answers1[0]   , ["who": .lit("mia")])
+    XCTAssertEqual(answers1[0]   , ["who": "mia"])
   }
 
   func testDisjunction() {
     let x: Term = .var("x")
     let kb: KnowledgeBase = [
-      .fact("hot", .lit("fire")),
-      .fact("cold", .lit("ice")),
+      .fact("hot", "fire"),
+      .fact("cold", "ice"),
       .rule("painful", x) {
         .fact("hot", x) || .fact("cold", x)
       },
@@ -79,7 +79,7 @@ class LogicKitTests: XCTestCase {
     let x   : Term = .var("x")
     let y   : Term = .var("y")
     let z   : Term = .var("z")
-    let zero: Term = .lit("zero")
+    let zero: Term = "zero"
 
     func succ(_ x: Term) -> Term {
       return .fact("succ", x)

@@ -75,8 +75,8 @@ public enum Term {
   }
 
   public subscript(terms: Term...) -> Term {
-    guard case let .val(val) = self else { fatalError() }
-    guard let name = val as? String else { fatalError() }
+    guard case ._term(let name, let subterms) = self, subterms.isEmpty
+      else { fatalError("\(self) cannot be coerced into a functor") }
     return ._term(name: name, arguments: terms)
   }
 
@@ -166,6 +166,6 @@ extension Term: CustomStringConvertible {
 
 extension Term : ExpressibleByStringLiteral {
   public init(stringLiteral : String) {
-    self = .lit(stringLiteral)
+    self = .fact(stringLiteral)
   }
 }
