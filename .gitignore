@@ -1,4 +1,11 @@
+# macOS
 .DS_Store
+
+# Swift PM and Xcode
 /.build
 /Packages
+/Package.resolved
 /*.xcodeproj
+
+# Project specific files
+InputSamples/
