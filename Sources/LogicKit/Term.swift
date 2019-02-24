@@ -1,9 +1,9 @@
 infix operator ~=~: ComparisonPrecedence
-infix operator =>
-infix operator |-
-infix operator ⊢
-infix operator ∧
-infix operator ∨
+infix operator => : AssignmentPrecedence
+infix operator |- : AssignmentPrecedence
+infix operator ⊢  : AssignmentPrecedence
+infix operator ∧  : LogicalConjunctionPrecedence
+infix operator ∨  : LogicalDisjunctionPrecedence
 
 public enum Term {
 
