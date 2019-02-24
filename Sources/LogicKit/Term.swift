@@ -84,12 +84,6 @@ public enum Term {
 
   /////
 
-  public static func fact(_ name: Term, _ arguments: Term...) -> Term {
-    guard case .val(let val) = name else { fatalError() }
-    guard let name = val as? String else { fatalError() }
-    return ._term(name: name, arguments: arguments)
-  }
-
   public static func fact(_ name: String, _ arguments: Term...) -> Term {
     return ._term(name: name, arguments: arguments)
   }
@@ -101,12 +95,6 @@ public enum Term {
   }
 
   /////
-
-  public static func rule(_ name: Term, _ arguments: Term..., body: () -> Term) -> Term {
-    guard case .val(let val) = name else { fatalError() }
-    guard let name = val as? String else { fatalError() }
-    return ._rule(name: name, arguments: arguments, body: body())
-  }
 
   public static func rule(_ name: String, _ arguments: Term..., body: () -> Term) -> Term {
     return ._rule(name: name, arguments: arguments, body: body())
