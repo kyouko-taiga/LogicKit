@@ -35,11 +35,11 @@ let package = Package(
 ```
 
 LogicKit adopts [semantic versioning](https://semver.org) to label its releases,
-which is fully compatible with how Swift Package Manager handles dependency versions.
+which is fully compatible with the way Swift Package Manager handles dependency versions.
 Hence, you may replace `.branch("master")` with any other particular specification
 to have a better control over the version your code is linked against.
 Please refer to Swift Package Manager's documentation for the syntax of such specifications.
-The master branch of the LogicKit always refers to the latest stable version of LogicKit,
+The master branch of the LogicKit repository always refers to the latest stable version of LogicKit,
 so linking against `.branch("master")` guarantees your project will always pull the latest version.
 
 Make sure the Swift Package Manager is able to properly download, compile and link LogicKit
@@ -190,13 +190,13 @@ for answer in answers {
 ```
 
 LogicKit relies on [*unification*](https://en.wikipedia.org/wiki/Unification_(computer_science))
-to carry out its deduction.
+to carry out its deductions.
 In a nutshell, given two term `p($x, b)` and `p(a, $y)`,
-the engine attempts to find values for each free variable
-(i.e. `$x` and `$y` in this particular example)
-so that both terms are equal.
-Unification usually occurs implicitly when one wants to match a given term with a particular *pattern*.
-Nevertheless, a special built-in predicate `~=~` allow one to request unification explicitly:
+the engine attempts to find values for each free variable so that both terms are equal
+(i.e. `$x := a` and `$y := b` in this particular example).
+Unification usually occurs implicitly,
+when a given term is matched with a particular *pattern*.
+Nevertheless, a special built-in predicate `~=~` allows one to request unification explicitly:
 
 ```swift
 let goal: Term = .fact("a") ~=~ .vat("x")
@@ -206,7 +206,7 @@ let goal: Term = .fact("a") ~=~ .vat("x")
 
 Being able to query our knowledge base this way is nice,
 but only gets us so far.
-What's more interesting is to use LogicKit to make deductions.
+What's more interesting is to use LogicKit to make more elaborate deductions.
 Let's add a rule to our knowledge base:
 
 ```swift
@@ -250,9 +250,9 @@ for answer in answers {
 }
 ```
 
-Note however than we may not interact the same way with atomic values as we can with regular terms.
+Note however than LogicKit doesn't interact the same way with atomic values as it does with regular terms.
 Indeed, LogicKit sees them as equatable black boxes,
-but cannot use any predicate on their intrinsic value to make deductions.
+but can't use any predicate on their intrinsic value to make deductions.
 They are indeed *atomic*.
 For instance, one may store a whole Swift array as an atomic value,
 but may not ask LogicKit to use its values to make deductions.
@@ -263,7 +263,7 @@ but may not ask LogicKit to use its values to make deductions.
 Why using atomic values at all then?
 Because they can act as a glue between native Swift code and logic programs written with LogicKit.
 While one cannot use predicates on their intrinsic value,
-one may write a Knowledge base that defines predicates over their identity.
+one may write a knowledge base that defines predicates over their identity.
 
 ### Troubleshooting
 
@@ -394,7 +394,7 @@ print(pred)
 ```
 
 Using `Term.rule(name:arguments:body:)` is recommended,
-as it's simpler to parse by the Swift compiler, compared to other constructures.
+as it's simpler to parse by the Swift compiler, compared to other constructuors.
 Therefore the compiler is likely to produce more insightful error messages in case of syntax errors.
 Nevertheless, you may use the operators `=>`, `|-` or `⊢` to achieve the same result.
 
@@ -411,7 +411,7 @@ let pred3: Term = .fact("painful", .var("x")) ⊢
 
 Conjunctions and disjunction of terms can be created with the operators `&&` and `||`,
 respectively.
-An variant of each operator that more closely resembles formal notations is also available.
+A variant of each operator that more closely resembles formal notations is also available.
 
 ```swift
 let pred1: Term = .fact("a") && .var("x")
@@ -435,7 +435,7 @@ let pred: Term = love["Ash", "Pikachu"] ~=~ love["Ash", .var("x")]
 LogicKit comes with some built-ins facts and rules that are commonly found in knowledge bases.
 See `Sources/LogicKitBuiltins` for the exhaustive list.
 
-First import the Swift module where they are defined:
+First, import the Swift module where they are defined:
 
 ```swift
 import LogicKitBuiltins
