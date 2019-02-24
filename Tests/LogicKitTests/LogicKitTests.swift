@@ -57,6 +57,24 @@ class LogicKitTests: XCTestCase {
     XCTAssertEqual(answers1[0]   , ["who": .lit("mia")])
   }
 
+  func testDisjunction() {
+    let x: Term = .var("x")
+    let kb: KnowledgeBase = [
+      .fact("hot", .lit("fire")),
+      .fact("cold", .lit("ice")),
+      .rule("painful", x) {
+        .fact("hot", x) || .fact("cold", x)
+      },
+    ]
+
+    let answers = Array(kb.ask(.fact("painful", x)))
+    XCTAssertEqual(answers.count, 2)
+
+    let results = Set(answers.compactMap({ $0["x"] }))
+    XCTAssert(results.contains("fire"))
+    XCTAssert(results.contains("ice"))
+  }
+
   func testRecursion() {
     let x   : Term = .var("x")
     let y   : Term = .var("y")
