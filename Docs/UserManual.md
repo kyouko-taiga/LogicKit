@@ -211,13 +211,13 @@ Let's add a rule to our knowledge base:
 ```swift
 let kb: KnowledgeBase = [
 
-  /* Same as before */
+  // Keep the facts previously defined here ...
 
   .rule("is stronger", .var("x"), .var("y")) {
     .fact("has type", .var("x"), .var("tx")) &&
     .fact("has type", .var("y"), .var("ty")) &&
     .fact("is effective against", .var("tx"), .var("ty"))
-  }
+  },
 ]
 ```
 
