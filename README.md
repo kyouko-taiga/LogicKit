@@ -74,9 +74,9 @@ let kb: KnowledgeBase = [
   .fact("is effective against", .fact("fire"), .fact("grass")),
   .fact("is effective against", .fact("grass"), .fact("water")),
 
-  .fact("has type", .fact("Bulbasaur")), .fact("grass")),
-  .fact("has type", .fact("Squirtle")), .fact("water")),
-  .fact("has type", .fact("Charmander")), .fact("fire")),
+  .fact("has type", .fact("Bulbasaur"), .fact("grass")),
+  .fact("has type", .fact("Squirtle"), .fact("water")),
+  .fact("has type", .fact("Charmander"), .fact("fire")),
 ]
 ```
 
@@ -162,7 +162,7 @@ let kb: KnowledgeBase = [
   charmander !> bulbasaur,
 ]
 
-var answer = kb.ask(bulbasaur !> squirtle)
+var answers = kb.ask(bulbasaur !> squirtle)
 ```
 
 LogicKit offers a bunch of syntax sugars to improve the legibility of your code.
