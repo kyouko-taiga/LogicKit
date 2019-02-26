@@ -104,9 +104,9 @@ let kb: KnowledgeBase = [
   .fact("is effective against", .fact("fire"), .fact("grass")),
   .fact("is effective against", .fact("grass"), .fact("water")),
 
-  .fact("has type", .fact("Bulbasaur")), .fact("grass")),
-  .fact("has type", .fact("Squirtle")), .fact("water")),
-  .fact("has type", .fact("Charmander")), .fact("fire")),
+  .fact("has type", .fact("Bulbasaur"), .fact("grass")),
+  .fact("has type", .fact("Squirtle"), .fact("water")),
+  .fact("has type", .fact("Charmander"), .fact("fire")),
 ]
 ```
 
@@ -125,7 +125,7 @@ Instead, it returns a sequence whose each element denote one correct answer.
 If the sequence is empty, then there isn't any solution.
 
 ```swift
-print("Squirtle has type water:" answers.next() != nil)
+print("Squirtle has type water:", answers.next() != nil)
 // Prints "Squirtle has type water: true"
 ```
 
@@ -186,7 +186,6 @@ var answers = kb.ask(.fact("has type", .var("x"), .var("y")))
 for answer in answers {
   print(answer["x"]!, "has type", answer["y"]!)
 }
-
 ```
 
 LogicKit relies on [*unification*](https://en.wikipedia.org/wiki/Unification_(computer_science))
@@ -199,7 +198,7 @@ when a given term is matched with a particular *pattern*.
 Nevertheless, a special built-in predicate `~=~` allows one to request unification explicitly:
 
 ```swift
-let goal: Term = .fact("a") ~=~ .vat("x")
+let goal: Term = .fact("a") ~=~ .var("x")
 ```
 
 ### Rules
@@ -210,11 +209,16 @@ What's more interesting is to use LogicKit to make more elaborate deductions.
 Let's add a rule to our knowledge base:
 
 ```swift
-.rule("is stronger", .var("x"), .var("y")) {
-  .fact("has type", .var("x"), .var("tx")) &&
-  .fact("has type", .var("y"), .var("ty")) &&
-  .fact("is effective against", .var("tx"), .var("ty"))
-}
+let kb: KnowledgeBase = [
+
+  /* Same as before */
+
+  .rule("is stronger", .var("x"), .var("y")) {
+    .fact("has type", .var("x"), .var("tx")) &&
+    .fact("has type", .var("y"), .var("ty")) &&
+    .fact("is effective against", .var("tx"), .var("ty"))
+  }
+]
 ```
 
 This rule states that a Pokemon `x` is stronger than a Pokemon `y`
@@ -223,12 +227,16 @@ Now we can ask things like:
 
 ```swift
 var answers = kb.ask(.fact("is stronger", "Charmander", "Bulbasaur"))
+print(answers.next() != nil)
 ```
 
 or even more interestingly:
 
 ```swift
 var answers = kb.ask(.fact("is stronger", .var("a"), .var("b")))
+for answer in answers {
+  print(answer["a"]!, "has type", answer["b"]!)
+}
 ```
 
 ### Atomic Values (a.k.a. Literals)
