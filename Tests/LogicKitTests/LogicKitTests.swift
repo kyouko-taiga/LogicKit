@@ -22,6 +22,16 @@ class LogicKitTests: XCTestCase {
     XCTAssertEqual(answers2.count, 0)
   }
 
+  func testExtractValue() {
+    let swiftValue = [1, 2, 3]
+    let atom: Term = .lit(swiftValue)
+    XCTAssertEqual(atom.extractValue(ofType: [Int].self), swiftValue)
+    XCTAssertNil(atom.extractValue(ofType: Int.self))
+
+    let fact: Term = .fact("hello")
+    XCTAssertNil(fact.extractValue(ofType: String.self))
+  }
+
   func testFactsWithVariables() {
     let kb: KnowledgeBase = [
       .fact("<", .lit(0), .lit(1)),
