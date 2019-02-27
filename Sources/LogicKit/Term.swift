@@ -82,7 +82,7 @@ public enum Term {
     return .val(AnyHashable(value))
   }
 
-  func extractValue<T>(ofType type: T.Type) -> T? {
+  public func extractValue<T>(ofType type: T.Type) -> T? {
     guard case .val(let v) = self
       else { return nil }
     return v as? T

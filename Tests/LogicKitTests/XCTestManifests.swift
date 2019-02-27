@@ -14,6 +14,8 @@ extension LogicKitTests {
     static let __allTests = [
         ("testBacktracking", testBacktracking),
         ("testConstantFacts", testConstantFacts),
+        ("testDisjunction", testDisjunction),
+        ("testExtractValue", testExtractValue),
         ("testFactsWithVariables", testFactsWithVariables),
         ("testLitSyntax", testLitSyntax),
         ("testRecursion", testRecursion),
