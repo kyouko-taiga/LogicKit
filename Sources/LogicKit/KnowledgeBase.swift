@@ -96,8 +96,11 @@ public struct KnowledgeBase: Hashable {
   public static func + (lhs: KnowledgeBase, rhs: KnowledgeBase) -> KnowledgeBase {
     var result = KnowledgeBase(knowledge: [])
     for name in lhs.predicates.keys.concatenated(with: rhs.predicates.keys) {
-      result.predicates[name] =
-        (lhs.predicates[name] ?? []) + (rhs.predicates[name] ?? [])
+      result.predicates[name] = lhs.predicates[name] ?? []
+      if let right = rhs.predicates[name] {
+        let set = Set(result.predicates[name]!)
+        result.predicates[name]?.append(contentsOf: right.filter({ !set.contains($0) }))
+      }
     }
     result.literals = lhs.literals.union(rhs.literals)
     return result
