@@ -168,6 +168,22 @@ var answers = kb.ask(bulbasaur !> squirtle)
 LogicKit offers a bunch of syntax sugars to improve the legibility of your code.
 Make sure to check the *User Manual* for a comprehensive documentation.
 
+### Builtins types
+
+Here a list of the builtins types you can use directly in LogicKit:
+
+|Builtins types|Generators|Constructor|Operators|Helpers|
+|---|----------|-----------|---------|---------|
+|Nat|```zero succ(Term)```|```Nat.from(Int)```|```add(Term, Term, Term) mul(Term, Term, Term) sub(Term, Term, Term) div(Term, Term, Term) mod(Term, Term, Term) greater(Term, Term) greaterOrEqual(Term, Term) smaller(Term, Term) smallerOrEqual(x,y) ```| ```asSwiftInt(Term) isNat(Term)```|
+|List|```empty cons(Term, Term)```|```List.from(elements: C) ```*|```count(list: Term, res: Term) contains(list: Term, element: Term) concat(Term, Term, Term)```|```isList(Term)```|
+
+\* C is a type which implements the protocol Collection and where elements inside are Terms. For instance: `Nat`
+```swift
+let list = List.from(elements: [1,2,3].map(Nat.from))
+// Or
+let list = List.from(elements: [Nat.from(1), Nat.from(2), Nat.from(3)])
+```
+
 ### Installation
 
 LogicKit is distributed in the form of a Swift package
