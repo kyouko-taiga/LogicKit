@@ -172,10 +172,10 @@ Make sure to check the *User Manual* for a comprehensive documentation.
 
 Here a list of the builtins types you can use directly in LogicKit:
 
-|Builtins types|Generators|Constructor|Operators|Helpers|
-|---|----------|-----------|---------|---------|
-|Nat|```zero succ(Term)```|```Nat.from(Int)```|```add(Term, Term, Term) mul(Term, Term, Term) sub(Term, Term, Term) div(Term, Term, Term) mod(Term, Term, Term) greater(Term, Term) greaterOrEqual(Term, Term) smaller(Term, Term) smallerOrEqual(x,y) ```| ```asSwiftInt(Term) isNat(Term)```|
-|List|```empty cons(Term, Term)```|```List.from(elements: C) ```*|```count(list: Term, res: Term) contains(list: Term, element: Term) concat(Term, Term, Term)```|```isList(Term)```|
+|Builtins types|Constructor|Operators|Helpers|
+|---|-----------|---------|---------|
+|**Nat**|`zero succ(_:)`|`add(_:_:_:) sub(_:_:_:) mul(_:_:_:)` <br/> ` div(_:_:_:) mod(_:_:_:)` <br/> `  greater(_:_:)  greaterOrEqual(_:_:)` <br/> `smaller(_:_:) smallerOrEqual(_:_:) `| `Nat.from(_:)`<br/>` asSwiftInt(_:)`<br/>`isNat(_:)`|
+|**List**|`empty cons(_:_:)`|`count(list:res:)` <br/> `contains(list:element:_:)`<br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
 
 \* C is a type which implements the protocol Collection and where elements inside are Terms. For instance: `Nat`
 ```swift
