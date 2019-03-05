@@ -168,6 +168,23 @@ var answers = kb.ask(bulbasaur !> squirtle)
 LogicKit offers a bunch of syntax sugars to improve the legibility of your code.
 Make sure to check the *User Manual* for a comprehensive documentation.
 
+### Builtins types
+
+Here a list of the builtins types you can use directly in LogicKit:
+
+|Builtins types|Constructor|Operators|Helpers|
+|---|-----------|---------|---------|
+|**Nat**|`zero succ(_:)`|`add(_:_:_:) sub(_:_:_:) mul(_:_:_:)` <br/> ` div(_:_:_:) mod(_:_:_:)` <br/> `  greater(_:_:)  greaterOrEqual(_:_:)` <br/> `smaller(_:_:) smallerOrEqual(_:_:) `| `Nat.from(_:)`<br/>` asSwiftInt(_:)`<br/>`isNat(_:)`|
+|**List**|`empty cons(_:_:)`|`count(list:res:)` <br/> `contains(list:element:_:)`<br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
+
+Example on how to use `List.from`:
+
+```swift
+let list = List.from(elements: [1,2,3].map(Nat.from))
+// Or
+let list = List.from(elements: [Nat.from(1), Nat.from(2), Nat.from(3)])
+```
+
 ### Installation
 
 LogicKit is distributed in the form of a Swift package
