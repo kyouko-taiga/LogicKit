@@ -175,7 +175,7 @@ Here a list of the builtins types you can use directly in LogicKit:
 |Builtins types|Constructor|Operators|Helpers|
 |---|-----------|---------|---------|
 |**Nat**|`zero succ(_:)`|`add(_:_:_:) sub(_:_:_:) mul(_:_:_:)` <br/> ` div(_:_:_:) mod(_:_:_:)` <br/> `  greater(_:_:)  greaterOrEqual(_:_:)` <br/> `smaller(_:_:) smallerOrEqual(_:_:) `| `Nat.from(_:)`<br/>` asSwiftInt(_:)`<br/>`isNat(_:)`|
-|**List**|`empty cons(_:_:)`|`count(list:res:)` <br/> `contains(list:element:_:)`<br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
+|**List**|`empty cons(_:_:)`|`count(list:count:)` <br/> `contains(list:element:)`<br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
 
 Example on how to use `List.from`:
 
