@@ -1,10 +1,3 @@
-infix operator ~=~: ComparisonPrecedence
-infix operator => : AssignmentPrecedence
-infix operator |- : AssignmentPrecedence
-infix operator ⊢  : AssignmentPrecedence
-infix operator ∧  : LogicalConjunctionPrecedence
-infix operator ∨  : LogicalDisjunctionPrecedence
-
 public enum Term {
 
   case `var`(String)
@@ -74,80 +67,6 @@ public enum Term {
     case .disjunction(let lhs, let rhs):
       return .disjunction(lhs.renaming(variables), rhs.renaming(variables))
     }
-  }
-
-  // MARK: EDSL
-
-  public static func lit<T>(_ value: T) -> Term where T: Hashable {
-    return .val(AnyHashable(value))
-  }
-
-  public func extractValue<T>(ofType type: T.Type) -> T? {
-    guard case .val(let v) = self
-      else { return nil }
-    return v as? T
-  }
-
-  /////
-
-  public static func fact(_ name: String, _ arguments: Term...) -> Term {
-    return ._term(name: name, arguments: arguments)
-  }
-
-  public subscript(terms: Term...) -> Term {
-    guard case ._term(let name, let subterms) = self, subterms.isEmpty
-      else { fatalError("Cannot coerce '\(self)' into a functor") }
-    return ._term(name: name, arguments: terms)
-  }
-
-  /////
-
-  public static func rule(_ name: String, _ arguments: Term..., body: () -> Term) -> Term {
-    return ._rule(name: name, arguments: arguments, body: body())
-  }
-
-  public static func =>(lhs: Term, rhs: Term) -> Term {
-    guard case ._term(let name, let args) = rhs
-      else { fatalError("Cannot use '\(self)' as a rule head.") }
-    return ._rule(name: name, arguments: args, body: lhs)
-  }
-
-  public static func |-(lhs: Term, rhs: Term) -> Term {
-    guard case ._term(let name, let args) = lhs
-      else { fatalError("Cannot use '\(self)' as a rule head.") }
-    return ._rule(name: name, arguments: args, body: rhs)
-  }
-
-  public static func ⊢(lhs: Term, rhs: Term) -> Term {
-    guard case ._term(let name, let args) = lhs
-      else { fatalError("Cannot use '\(self)' as a rule head.") }
-    return ._rule(name: name, arguments: args, body: rhs)
-  }
-
-  /////
-
-  public static func &&(lhs: Term, rhs: Term) -> Term {
-    return .conjunction(lhs, rhs)
-  }
-
-  public static func ∧(lhs: Term, rhs: Term) -> Term {
-    return .conjunction(lhs, rhs)
-  }
-
-  /////
-
-  public static func ||(lhs: Term, rhs: Term) -> Term {
-    return .disjunction(lhs, rhs)
-  }
-
-  public static func ∨(lhs: Term, rhs: Term) -> Term {
-    return .disjunction(lhs, rhs)
-  }
-
-  /////
-
-  public static func ~=~(lhs: Term, rhs: Term) -> Term {
-    return ._term(name: "lk.~=~", arguments: [lhs, rhs])
   }
 
 }
