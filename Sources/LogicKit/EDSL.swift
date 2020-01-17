@@ -102,6 +102,13 @@ extension Term: PredicateConvertible {
 
 }
 
+extension Term: ExpressibleByStringLiteral {
+
+  public init(stringLiteral : String) {
+    self = .fact(stringLiteral)
+  }
+
+}
 
 @dynamicCallable
 public struct Functor {

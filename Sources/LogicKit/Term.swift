@@ -99,9 +99,3 @@ extension Term: CustomStringConvertible {
   }
 
 }
-
-extension Term : ExpressibleByStringLiteral {
-  public init(stringLiteral : String) {
-    self = .fact(stringLiteral)
-  }
-}
