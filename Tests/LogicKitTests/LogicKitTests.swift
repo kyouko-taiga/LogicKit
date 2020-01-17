@@ -149,6 +149,21 @@ class LogicKitTests: XCTestCase {
     XCTAssertNotNil(answers[1]["nodes"])
   }
 
+  func testNative() {
+    let isTextOutputStream = "isTextOutputStream"/1
+    let a: Term = .var("a")
+
+    let kb: KnowledgeBase = [
+      isTextOutputStream(a) |- .native { t in
+        t["a"]?.extractValue() is TextOutputStream
+      }
+    ]
+
+    let query: Term = isTextOutputStream("Koala")
+    let answer = kb.ask(query).next()
+    XCTAssertNotNil(answer)
+  }
+
   func testLitSyntax() {
     let play  : Term = "play"
     let mia   : Term = "mia"

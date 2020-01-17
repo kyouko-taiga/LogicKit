@@ -30,7 +30,7 @@ public struct KnowledgeBase: Hashable {
       case .val:
         literals.insert(term)
 
-      case .var, .conjunction, .disjunction:
+      case .var, .conjunction, .disjunction, .native:
         fatalError("Cannot use '\(term)' as a predicate.")
       }
     }

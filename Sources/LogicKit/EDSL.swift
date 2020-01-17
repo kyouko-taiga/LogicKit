@@ -17,6 +17,12 @@ extension Term {
     return v as? T
   }
 
+  public func extractValue() -> Any? {
+    guard case .val(let v) = self
+      else { return nil }
+    return v
+  }
+
   public static func fact(_ name: String, _ arguments: Term...) -> Term {
     return ._term(name: name, arguments: arguments)
   }

@@ -112,6 +112,13 @@ final class Realizer: RealizerBase {
       }
     }
 
+    // Check for the built-in `native/1` predicate.
+    if case .native(let predicate) = goal {
+      return predicate(parentBindings.reified)
+        ? parentBindings
+        : nil
+    }
+
     // Look for the next root clause.
     while let clause = clauseIterator?.next() {
       logger?.willAttempt(clause: clause)
