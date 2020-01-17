@@ -12,4 +12,6 @@ public struct AnswerSet: IteratorProtocol, Sequence {
     return realizer.next()?.reified.filter { variables.contains($0.key) }
   }
 
+  public var all: [BindingMap] { Array(self) }
+
 }

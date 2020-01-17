@@ -113,7 +113,7 @@ class LogicKitTests: XCTestCase {
 
     let query: Term = .fact("diff", nat(value: 2), nat(value: 4), .var("result"))
     let answers = kb.ask(query)
-    var answer  = answers.next()
+    let answer  = answers.next()
     XCTAssertNotNil(answer)
     XCTAssertEqual(answer?["result"], nat(value: 2))
   }
@@ -147,6 +147,21 @@ class LogicKitTests: XCTestCase {
     // All paths should bind the variable `nodes`.
     XCTAssertNotNil(answers[0]["nodes"])
     XCTAssertNotNil(answers[1]["nodes"])
+  }
+
+  func testNative() {
+    let isTextOutputStream = "isTextOutputStream"/1
+    let a: Term = .var("a")
+
+    let kb: KnowledgeBase = [
+      isTextOutputStream(a) |- .native { t in
+        t["a"]?.extractValue() is TextOutputStream
+      }
+    ]
+
+    let query: Term = isTextOutputStream("Koala")
+    let answer = kb.ask(query).next()
+    XCTAssertNotNil(answer)
   }
 
   func testLitSyntax() {
@@ -185,6 +200,22 @@ class LogicKitTests: XCTestCase {
       (play[mia] && play[mia]) => happy[mia],
       happy[mia] ⊢ (play[mia] ∧ play[mia])
     )
+  }
+
+  func testFunctorBuilderSyntax() {
+    enum Bird {
+      case ostrich, pelican, swift
+    }
+
+    let heavier = "heavier"/2
+    let kb: KnowledgeBase = [
+      heavier(Bird.ostrich, Bird.pelican),
+      heavier(Bird.pelican, Bird.swift),
+    ]
+
+    let x: Term = .var("x")
+    let answers = kb.ask(heavier(Bird.pelican, x))
+    XCTAssertEqual(answers.all.count, 1)
   }
 
 }

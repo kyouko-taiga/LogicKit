@@ -2,17 +2,13 @@
 
 [![Build Status](https://travis-ci.org/kyouko-taiga/LogicKit.svg?branch=master)](https://travis-ci.org/kyouko-taiga/LogicKit)
 
-LogicKit is a Prolog-like language,
-distributed in the form of a Swift Embedded Domain Specific Language (EDSL).
+LogicKit is a Prolog-like language, distributed in the form of a Swift Embedded Domain Specific Language (EDSL).
 
 ## Motivation
 
 [Prolog](https://en.wikipedia.org/wiki/Prolog) is a general purpose logic programming language.
-A program is expressed in terms of relations,
-and computation in terms of queries over these relations.
-The beauty of logic programming is that
-we no longer have to tell a computer *how* to compute a result,
-but only describe the constraints it should respect.
+A program is expressed in terms of relations, and computation in terms of queries over these relations.
+The beauty of logic programming is that we no longer have to tell a computer *how* to compute a result, but only describe the constraints it should respect.
 For instance, the following Prolog snippet finds all the pairs of operands whose sum is 2.
 
 ```prolog
@@ -25,8 +21,7 @@ add(succ(X), Y, Z) :-
 
 Writing programs this way is arguably quite interesting.
 However, just as any other paradigm, logic programming isn't a fit-them-all solution.
-For instance, algorithms that are easily expressed in an imperative way
-often prove to be difficult to write in a functional logic programming style.
+For instance, algorithms that are easily expressed in an imperative way often prove to be difficult to write in a functional logic programming style.
 This is why most modern programming languages, like Swift, are all about miying paradigms.
 
 So why not bringing logic programming into the mix as well!
@@ -52,19 +47,17 @@ for result in answers.prefix(3) {
 
 ## Getting Started
 
-The following is a quick *Getting Started* introduction the installation and use of LogicKit
-that only brushes over the library.
+The following is a quick *Getting Started* introduction the installation and use of LogicKit that only brushes over the library.
 You may refer want to refer to the *User Manual* for more details.
 
 ### Quick tutorial
 
-Like Prolog, LogicKit revolves around a knowledge base (or database),
-against which one can make queries.
+Like Prolog, LogicKit revolves around a knowledge base (or database), against which one can make queries.
 There are four constructs in LogicKit:
-Facts (`Term.fact(_:_:)`) that denote predicates and propositions,
-rules (`Term.rule(_:_:_:)`) that denote conditional facts,
-literals (`Term.lit(_:)`) that denote atomic values, and
-variables (`Term.var(_:)`) that act as placeholders for other terms.
+* facts (`Term.fact(_:_:)`) denote predicates and propositions,
+* rules (`Term.rule(_:_:_:)`) denote conditional facts,
+* literals (`Term.lit(_:)`) that denote atomic values, and
+* variables (`Term.var(_:)`) that act as placeholders for other terms.
 
 Knowledge bases are nothing more than a collection of such constructs:
 
@@ -81,16 +74,14 @@ let kb: KnowledgeBase = [
 ```
 
 The above knowledge base only makes use of facts and propositions.
-It states for instance that *water is effective against fire*,
-or that *Squirtle has type water*.
+It states for instance that *water is effective against fire*, or that *Squirtle has type water*.
 One can query such knowledge base as follows:
 
 ```swift
 var answers = kb.ask(.fact("has type", .fact("Squirtle"), .fact("water")))
 ```
 
-Since there might be several answers to a single query,
-`Knowledge.ask(_:logger:)` doesn't return a single yes/no answer.
+Since there might be several answers to a single query, `Knowledge.ask(_:logger:)` doesn't return a single yes/no answer.
 Instead, it returns a sequence whose each element denote one correct answer.
 If the sequence is empty, then there isn't any solution.
 
@@ -99,8 +90,7 @@ print("Squirtle has type water:", answers.next() != nil)
 // Prints "Squirtle has type water: true"
 ```
 
-Being able to query our knowledge base this way is nice,
-but only gets us so far.
+Being able to query our knowledge base this way is nice, but only gets us so far.
 What's more interesting is to use LogicKit to make deductions.
 Let's add a rule to our knowledge base:
 
@@ -112,8 +102,7 @@ Let's add a rule to our knowledge base:
 }
 ```
 
-This rule states that a Pokemon `x` is stronger than a Pokemon `y`
-if the type of `x` is effective against that of `y`.
+This rule states that a Pokemon `x` is stronger than a Pokemon `y` if the type of `x` is effective against that of `y`.
 Now we can ask things like:
 
 ```swift
@@ -126,11 +115,8 @@ or even more interestingly:
 var answers = kb.ask(.fact("is stronger", .var("a"), .var("b")))
 ```
 
-Note that because the query involves variables,
-not only are we interested to know if it is satisfiable,
-but also for what binding of `a` and `b`.
-Well, in fact each element of the sequence returned by `Knowledge.ask(_:logger:)`
-denotes such binding:
+Note that because the query involves variables, not only are we interested to know if it is satisfiable, but also for what binding of `a` and `b`.
+Well, in fact each element of the sequence returned by `Knowledge.ask(_:logger:)` denotes such binding:
 
 ```swift
 for binding in answers {
@@ -174,8 +160,8 @@ Here a list of the builtins types you can use directly in LogicKit:
 
 |Builtins types|Constructor|Operators|Helpers|
 |---|-----------|---------|---------|
-|**Nat**|`zero succ(_:)`|`add(_:_:_:) sub(_:_:_:) mul(_:_:_:)` <br/> ` div(_:_:_:) mod(_:_:_:)` <br/> `  greater(_:_:)  greaterOrEqual(_:_:)` <br/> `smaller(_:_:) smallerOrEqual(_:_:) `| `Nat.from(_:)`<br/>` asSwiftInt(_:)`<br/>`isNat(_:)`|
-|**List**|`empty cons(_:_:)`|`count(list:count:)` <br/> `contains(list:element:)`<br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
+|**Nat**|`zero succ(_:)`|`add(_:_:_:)`, `sub(_:_:_:)`, `mul(_:_:_:)` <br/> `div(_:_:_:)`, `mod(_:_:_:)` <br/> `greater(_:_:)`, `greaterOrEqual(_:_:)` <br/> `smaller(_:_:)`, `smallerOrEqual(_:_:)`| `Nat.from(_:)` <br/> `asSwiftInt(_:)` <br/> `isNat(_:)`|
+|**List**|`empty cons(_:_:)`|`count(list:count:)` <br/> `contains(list:element:)` <br/> `concat(_:_:_:)`|`List.from<Collection>(elements:)` <br/> `isList(_:)`|
 
 Example on how to use `List.from`:
 
@@ -185,10 +171,25 @@ let list = List.from(elements: [1,2,3].map(Nat.from))
 let list = List.from(elements: [Nat.from(1), Nat.from(2), Nat.from(3)])
 ```
 
+### Native predicates
+
+Native predicates are an experimental feature that allows Swift functions to act as logic predicates.
+While they cannot be used to infer the value of a logic variable, they can be used to check if a particular binding satisfies some properties.
+A common pattern is to use native predicates to define the body of a rule, so that it can be defined in terms of a Swift predicate:
+
+```swift
+let isTextOutputStream = "isTextOutputStream"/1
+let a: Term = .var("a")
+let kb: KnowledgeBase = [
+  isTextOutputStream(a) |- .native { t in
+    t["a"]?.extractValue() is TextOutputStream
+  }
+]
+```
+
 ### Installation
 
-LogicKit is distributed in the form of a Swift package
-and can be integrated with the [Swift Package Manager](https://swift.org/package-manager/).
+LogicKit is distributed in the form of a Swift package and can be integrated with the [Swift Package Manager](https://swift.org/package-manager/).
 
 Start by creating a new package (unless you already have one):
 
@@ -214,19 +215,15 @@ let package = Package(
 )
 ```
 
-> The master branch of the LogicKit always refers to the latest stable version of LogicKit, so
-> using `.branch("master")` to specify the dependency location guarantees you'll always pull the
-> latest version. See Swift Package Manager's documentation for alternative configurations.
+> The master branch of the LogicKit always refers to the latest stable version of LogicKit, so using `.branch("master")` to specify the dependency location guarantees you'll always pull the latest version. See Swift Package Manager's documentation for alternative configurations.
 
-Make sure the Swift Package Manager is able to properly download, compile and link LogicKit
-with the following command:
+Make sure the Swift Package Manager is able to properly download, compile and link LogicKit with the following command:
 
 ```bash
 swift build
 ```
 
-If everything goes well,
-you should then be able to import LogicKit in your own Swift sources:
+If everything goes well, you should then be able to import LogicKit in your own Swift sources:
 
 ```swift
 import LogicKit
@@ -236,8 +233,7 @@ import LogicKit
 
 > For Xcode users:
 > You can use the Swift Package Manager to create an Xcode project.
-> Once you've added LogicKit has a dependency and compiled your project at least once,
-> type the command:
+> Once you've added LogicKit has a dependency and compiled your project at least once, type the command:
 >
 > ```bash
 > swift package generate-xcodeproj
