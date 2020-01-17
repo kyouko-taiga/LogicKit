@@ -1,13 +1,24 @@
 public enum Term {
 
+  /// A logic variable.
   case `var`(String)
+
+  /// A literal (Swift) value.
   case val(AnyHashable)
+
+  /// A fact.
   indirect case _term(name: String, arguments: [Term])
+
+  /// A rule.
   indirect case _rule(name: String, arguments: [Term], body: Term)
 
+  /// A conjunction of terms.
   indirect case conjunction(Term, Term)
+
+  /// A disjunction of terms.
   indirect case disjunction(Term, Term)
 
+  /// The DNF form of this term.
   var dnf: Term {
     switch self {
     case .conjunction(let a, .disjunction(let b, let c)):
@@ -19,6 +30,7 @@ public enum Term {
     }
   }
 
+  /// The goals to satisfy in this term.
   var goals: [[Term]] {
     switch dnf {
     case .conjunction(let lhs, let rhs):
@@ -31,6 +43,7 @@ public enum Term {
     }
   }
 
+  /// The free variables occurring in this term.
   var variables: Set<String> {
     switch self {
     case .var(let x):
@@ -49,6 +62,7 @@ public enum Term {
     }
   }
 
+  /// Returns an alpha-equivalent term in which all given variables have been renamed.
   func renaming(_ variables: Set<String>) -> Term {
     switch self {
     case .var(let x) where variables.contains(x):
