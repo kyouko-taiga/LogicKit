@@ -202,4 +202,20 @@ class LogicKitTests: XCTestCase {
     )
   }
 
+  func testFunctorBuilderSyntax() {
+    enum Bird {
+      case ostrich, pelican, swift
+    }
+
+    let heavier = "heavier"/2
+    let kb: KnowledgeBase = [
+      heavier(Bird.ostrich, Bird.pelican),
+      heavier(Bird.pelican, Bird.swift),
+    ]
+
+    let x: Term = .var("x")
+    let answers = kb.ask(heavier(Bird.pelican, x))
+    XCTAssertEqual(answers.all.count, 1)
+  }
+
 }
