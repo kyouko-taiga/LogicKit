@@ -4,6 +4,8 @@
 
 LogicKit is a Prolog-like language, distributed in the form of a Swift Embedded Domain Specific Language (EDSL).
 
+Short paper: [LogicKit: bringing logic programming to swift](https://dl.acm.org/doi/abs/10.1145/3397537.3399575)
+
 ## Motivation
 
 [Prolog](https://en.wikipedia.org/wiki/Prolog) is a general purpose logic programming language.
